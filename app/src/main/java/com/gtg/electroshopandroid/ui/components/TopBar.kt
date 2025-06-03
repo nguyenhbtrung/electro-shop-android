@@ -1,9 +1,11 @@
 package com.gtg.electroshopandroid.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Notifications
@@ -17,6 +19,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -28,10 +31,12 @@ fun TopBar() {
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_launcher_foreground),
+                Image(
+                    painter = painterResource(R.drawable.logo),
                     contentDescription = stringResource(R.string.app_display_name),
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(text = stringResource(R.string.app_display_name))
@@ -45,8 +50,8 @@ fun TopBar() {
                 Icon(Icons.Default.Notifications, contentDescription = stringResource(R.string.notifications))
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+//        colors = TopAppBarDefaults.topAppBarColors(
+//            containerColor = MaterialTheme.colorScheme.primaryContainer
+//        )
     )
 }
