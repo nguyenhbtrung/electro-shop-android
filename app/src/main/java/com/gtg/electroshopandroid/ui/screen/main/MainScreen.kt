@@ -1,7 +1,9 @@
 package com.gtg.electroshopandroid.ui.screen.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +19,10 @@ fun MainScreen() {
         topBar = { TopBar() },
         bottomBar = { BottomBar(navController) }
     ) { paddingValues ->
-        Box(Modifier.padding(paddingValues)) {
+        Box(Modifier
+            .padding(paddingValues)
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+        ) {
             AppNavHost(navController)
         }
     }

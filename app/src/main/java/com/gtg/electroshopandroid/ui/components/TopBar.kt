@@ -50,8 +50,8 @@ fun TopBar() {
                 Icon(Icons.Default.Notifications, contentDescription = stringResource(R.string.notifications))
             }
         },
-//        colors = TopAppBarDefaults.topAppBarColors(
-//            containerColor = MaterialTheme.colorScheme.primaryContainer
-//        )
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
     )
 }
