@@ -16,13 +16,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gtg.electroshopandroid.ui.screen.main.MainScreen
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,19 +31,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ElectroShopAndroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                MainScreen()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun TestThemeScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,8 +98,16 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MainScreenPreview() {
     ElectroShopAndroidTheme(darkTheme = false) {
-        Greeting("Android")
+        MainScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TestThemePreview() {
+    ElectroShopAndroidTheme(darkTheme = false) {
+        TestThemeScreen()
     }
 }
