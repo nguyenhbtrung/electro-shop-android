@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">ElectroShopAndroid</string>
-    <string name="home">Home</string>
-    <string name="explore">Explore</string>
-    <string name="cart">Cart</string>
-    <string name="favorites">Favorites</string>
-    <string name="profile">Profile</string>
+    <string name="app_display_name">GTG Shop</string>
+    <string name="home">Trang chủ</string>
+    <string name="explore">Khám phá</string>
+    <string name="cart">Giỏ hàng</string>
+    <string name="favorites">Yêu thích</string>
+    <string name="profile">Hồ sơ</string>
+    <string name="msg">Tin nhắn</string>
+    <string name="notifications">Thông báo</string>
 </resources>

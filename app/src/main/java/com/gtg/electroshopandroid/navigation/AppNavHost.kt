@@ -1,2 +1,23 @@
 package com.gtg.electroshopandroid.navigation
 
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.gtg.electroshopandroid.data.model.Screen
+import com.gtg.electroshopandroid.ui.screen.cart.CartScreen
+import com.gtg.electroshopandroid.ui.screen.explore.ExploreScreen
+import com.gtg.electroshopandroid.ui.screen.favorites.FavoritesScreen
+import com.gtg.electroshopandroid.ui.screen.home.HomeScreen
+import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
+
+@Composable
+fun AppNavHost(navController: NavHostController) {
+    NavHost(navController, startDestination = Screen.Home.route) {
+        composable(Screen.Home.route)     { HomeScreen() }
+        composable(Screen.Explore.route)  { ExploreScreen() }
+        composable(Screen.Cart.route)     { CartScreen() }
+        composable(Screen.Favorites.route){ FavoritesScreen() }
+        composable(Screen.Profile.route)  { ProfileScreen() }
+    }
+}
