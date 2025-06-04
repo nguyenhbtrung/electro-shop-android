@@ -31,11 +31,10 @@ fun BottomBarMain(navController: NavHostController) {
             NavigationBarItem(
                 icon = {
                     if (screen.route == Screen.Cart.route) {
-                        // Icon nằm trên nền hình tròn cho mắm Cart
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
-                                .size(48.dp) // Kích thước tùy chỉnh theo nhu cầu
+                                .size(48.dp)
                                 .background(
                                     color = MaterialTheme.colorScheme.primary,
                                     shape = CircleShape
@@ -43,7 +42,7 @@ fun BottomBarMain(navController: NavHostController) {
                         ) {
                             Icon(
                                 imageVector = screen.icon ?: Icons.Filled.QuestionMark,
-                                contentDescription = null, // Không cho label cho Cart
+                                contentDescription = stringResource(id = screen.label),
                                 tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
@@ -55,7 +54,6 @@ fun BottomBarMain(navController: NavHostController) {
                     }
                 },
                 label = {
-                    // Nếu là Cart, không hiển thị text, ngược lại hiển thị label
                     if (screen.route != Screen.Cart.route) {
                         Text(text = stringResource(id = screen.label))
                     }
