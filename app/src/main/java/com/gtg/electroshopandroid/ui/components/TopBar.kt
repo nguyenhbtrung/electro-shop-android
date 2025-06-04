@@ -27,7 +27,10 @@ import com.gtg.electroshopandroid.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun TopBar(
+    onMessagesClick: () -> Unit,
+    onNotificationsClick: () -> Unit
+) {
     TopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -43,10 +46,10 @@ fun TopBar() {
             }
         },
         actions = {
-            IconButton(onClick = { /* TODO: navigate to messages */ }) {
+            IconButton(onClick = onMessagesClick) {
                 Icon(Icons.Default.ChatBubble, contentDescription = stringResource(R.string.msg))
             }
-            IconButton(onClick = { /* TODO: navigate to notifications */ }) {
+            IconButton(onClick = onNotificationsClick) {
                 Icon(Icons.Default.Notifications, contentDescription = stringResource(R.string.notifications))
             }
         },

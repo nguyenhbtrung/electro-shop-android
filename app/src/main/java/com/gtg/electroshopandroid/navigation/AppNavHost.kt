@@ -9,6 +9,8 @@ import com.gtg.electroshopandroid.ui.screen.cart.CartScreen
 import com.gtg.electroshopandroid.ui.screen.explore.ExploreScreen
 import com.gtg.electroshopandroid.ui.screen.favorites.FavoritesScreen
 import com.gtg.electroshopandroid.ui.screen.home.HomeScreen
+import com.gtg.electroshopandroid.ui.screen.messages.MessagesScreen
+import com.gtg.electroshopandroid.ui.screen.notifications.NotificationsScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
 
 @Composable
@@ -19,5 +21,12 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.Cart.route)     { CartScreen() }
         composable(Screen.Favorites.route){ FavoritesScreen() }
         composable(Screen.Profile.route)  { ProfileScreen() }
+
+        composable(Screen.Messages.route) {
+            MessagesScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.Notifications.route) {
+            NotificationsScreen(onBack = { navController.popBackStack() })
+        }
     }
 }

@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ElectroShopAndroidTheme {
-                MainScreen()
+                App()
             }
         }
     }
@@ -100,7 +100,7 @@ fun TestThemeScreen(modifier: Modifier = Modifier) {
 @Composable
 fun MainScreenPreview() {
     ElectroShopAndroidTheme(darkTheme = false) {
-        MainScreen()
+        App()
     }
 }
 
