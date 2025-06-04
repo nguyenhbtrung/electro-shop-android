@@ -8,4 +8,6 @@
     <string name="profile">Hồ sơ</string>
     <string name="msg">Tin nhắn</string>
     <string name="notifications">Thông báo</string>
+    <string name="back">Quay lại</string>
+    <string name="msg_screen_title">Nhắn tin với cửa hàng</string>
 </resources>

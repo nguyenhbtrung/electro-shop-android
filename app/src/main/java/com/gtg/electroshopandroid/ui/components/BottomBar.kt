@@ -1,5 +1,7 @@
 package com.gtg.electroshopandroid.ui.components
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -22,7 +24,7 @@ fun BottomBar(navController: NavHostController) {
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = screen.icon,
+                        imageVector = screen.icon ?: Icons.Filled.QuestionMark,
                         contentDescription = stringResource(screen.label)
                     )
                 },
