@@ -10,4 +10,6 @@
     <string name="notifications">Thông báo</string>
     <string name="back">Quay lại</string>
     <string name="msg_screen_title">Nhắn tin với cửa hàng</string>
+    <string name="login">Đăng nhập</string>
+    <string name="signup">Đăng ký</string>
 </resources>

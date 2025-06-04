@@ -3,7 +3,7 @@ package com.gtg.electroshopandroid.ui.screen.auth
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
-class LoginViewModel : ViewModel() {
+class SignUpViewModel : ViewModel() {
     var userName = mutableStateOf("")
         private set
 
@@ -25,15 +25,16 @@ class LoginViewModel : ViewModel() {
         passwordVisible.value = !passwordVisible.value
     }
 
-    var loginSuccess = mutableStateOf(false)
+    var signUpSuccess = mutableStateOf(false)
 
-    fun onLoginClick() {
-        if (userName.value == "admin" && password.value == "123") {
-            loginSuccess.value = true
-        } else {
-            // Báo lỗi nếu cần
-        }
+    fun onSignUpClick() {
+        signUpSuccess.value = true
+//        if (userName.value == "admin" && password.value == "123") {
+//
+//        } else {
+//            // Báo lỗi nếu cần
+//        }
         // Xử lý đăng nhập (gọi API, validate, log, v.v.)
-        println("Đăng nhập với: ${userName.value} / ${password.value}")
+        println("Đăng ký với: ${userName.value} / ${password.value}")
     }
 }

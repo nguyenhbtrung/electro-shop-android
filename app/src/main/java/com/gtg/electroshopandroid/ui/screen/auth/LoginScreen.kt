@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,10 +45,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gtg.electroshopandroid.R
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
+fun LoginScreen(
+    viewModel: LoginViewModel = viewModel(),
+    onLoginSuccess: () -> Unit,
+    onSignupClick: () -> Unit
+) {
     val userName by viewModel.userName
     val password by viewModel.password
     val passwordVisible by viewModel.passwordVisible
+    val loginSuccess by viewModel.loginSuccess
+
+    LaunchedEffect(loginSuccess) {
+        if (loginSuccess) {
+            onLoginSuccess()
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -63,10 +76,11 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ttg_logo),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .clip(CircleShape)
+                    .size(100.dp)
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
 
@@ -78,13 +92,14 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
             )
             Spacer(modifier = Modifier.fillMaxHeight(0.0625f))
 
-            Text("Tên Đăng Nhập", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
+            Text("Tên Đăng Nhập:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
             OutlinedTextField(
                 value = userName,
                 onValueChange = viewModel::onUserNameChanged,
                 placeholder = { Text("Điền tên đăng nhập của bạn...") },
                 singleLine = true,
+                shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -92,7 +107,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.fillMaxHeight(0.0694f))
 
-            Text("Mật Khẩu", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
+            Text("Mật Khẩu:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
             OutlinedTextField(
                 value = password,
@@ -107,6 +122,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                         Icon(imageVector = icon, contentDescription = desc)
                     }
                 },
+                shape = RoundedCornerShape(10.dp),
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,7 +142,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                     contentColor = Color.White
                 )
             ) {
-                Text("Đăng Nhập")
+                Text("Đăng Nhập", fontSize = 20.sp)
             }
 
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
@@ -143,7 +159,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
                     textDecoration = TextDecoration.Underline, // gạch chân
                     modifier = Modifier.clickable {
                         //  Chuyển trang tại đây (ví dụ gọi navController hoặc thay đổi state)
-
+                        onSignupClick()
                     }
                 )
             }
@@ -161,6 +177,7 @@ fun PreviewLoginScreen() {
             .background(Color.White),
         contentAlignment = Alignment.Center,
     ) {
-        LoginScreen()
+        LoginScreen(onLoginSuccess = {},
+            onSignupClick = {})
     }
 }

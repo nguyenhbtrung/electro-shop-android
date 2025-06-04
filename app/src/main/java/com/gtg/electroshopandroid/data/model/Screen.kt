@@ -19,6 +19,10 @@ sealed class Screen(val route: String, val icon: ImageVector?, @StringRes val la
 
     data object Messages : Screen("messages", null, R.string.msg)
     data object Notifications: Screen("notifications", null, R.string.notifications)
+
+    data object Login : Screen("login", null, R.string.login)
+    data object Signup : Screen("signup", null, R.string.signup)
+
 }
 
 val bottomNavItems = listOf(
