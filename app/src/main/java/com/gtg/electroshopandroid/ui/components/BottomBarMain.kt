@@ -1,5 +1,9 @@
 package com.gtg.electroshopandroid.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material3.Icon
@@ -8,9 +12,13 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.gtg.electroshopandroid.data.model.Screen
 import com.gtg.electroshopandroid.data.model.bottomNavItems
 
 @Composable
@@ -22,17 +30,41 @@ fun BottomBarMain(navController: NavHostController) {
         bottomNavItems.forEach { screen ->
             NavigationBarItem(
                 icon = {
-                    Icon(
-                        imageVector = screen.icon ?: Icons.Filled.QuestionMark,
-                        contentDescription = stringResource(screen.label)
-                    )
+                    if (screen.route == Screen.Cart.route) {
+                        // Icon nằm trên nền hình tròn cho mắm Cart
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(48.dp) // Kích thước tùy chỉnh theo nhu cầu
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = CircleShape
+                                )
+                        ) {
+                            Icon(
+                                imageVector = screen.icon ?: Icons.Filled.QuestionMark,
+                                contentDescription = null, // Không cho label cho Cart
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    } else {
+                        Icon(
+                            imageVector = screen.icon ?: Icons.Filled.QuestionMark,
+                            contentDescription = stringResource(id = screen.label)
+                        )
+                    }
                 },
-                label = { Text(stringResource(screen.label)) },
+                label = {
+                    // Nếu là Cart, không hiển thị text, ngược lại hiển thị label
+                    if (screen.route != Screen.Cart.route) {
+                        Text(text = stringResource(id = screen.label))
+                    }
+                },
                 selected = currentRoute == screen.route,
                 onClick = {
                     if (currentRoute != screen.route) {
                         navController.navigate(screen.route) {
-                            // Pop up to tránh stack quá sâu
+                            // Pop up để tránh stack quá sâu
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
@@ -45,3 +77,4 @@ fun BottomBarMain(navController: NavHostController) {
         }
     }
 }
+

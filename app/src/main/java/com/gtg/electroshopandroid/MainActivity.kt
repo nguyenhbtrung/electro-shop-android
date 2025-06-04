@@ -101,8 +101,7 @@ fun TestThemeScreen(modifier: Modifier = Modifier) {
 @Composable
 fun MainScreenPreview() {
     ElectroShopAndroidTheme(darkTheme = false) {
-        App()
-//        MainScreen(navController = rememberNavController())
+        MainScreen(navController = rememberNavController())
     }
 }
 
