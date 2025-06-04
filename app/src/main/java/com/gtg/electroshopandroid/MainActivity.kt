@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.gtg.electroshopandroid.ui.screen.main.MainScreen
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
@@ -101,6 +102,7 @@ fun TestThemeScreen(modifier: Modifier = Modifier) {
 fun MainScreenPreview() {
     ElectroShopAndroidTheme(darkTheme = false) {
         App()
+//        MainScreen(navController = rememberNavController())
     }
 }
 

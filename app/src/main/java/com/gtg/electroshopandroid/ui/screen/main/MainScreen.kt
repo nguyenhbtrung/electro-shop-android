@@ -8,23 +8,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.gtg.electroshopandroid.data.model.Screen
 import com.gtg.electroshopandroid.navigation.AppNavHost
-import com.gtg.electroshopandroid.ui.components.BottomBar
-import com.gtg.electroshopandroid.ui.components.TopBar
+import com.gtg.electroshopandroid.ui.components.BottomBarMain
+import com.gtg.electroshopandroid.ui.components.TopBarMain
 
 @Composable
 fun MainScreen(navController: NavHostController) {
 
     Scaffold(
         topBar = {
-            TopBar(
+            TopBarMain(
                 onMessagesClick = { navController.navigate(Screen.Messages.route) },
                 onNotificationsClick = { navController.navigate(Screen.Notifications.route) }
             )
         },
-        bottomBar = { BottomBar(navController) }
+        bottomBar = { BottomBarMain(navController) }
     ) { paddingValues ->
         Box(Modifier
             .padding(paddingValues)

@@ -27,7 +27,7 @@ import com.gtg.electroshopandroid.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(
+fun TopBarMain(
     onMessagesClick: () -> Unit,
     onNotificationsClick: () -> Unit
 ) {
