@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.gtg.electroshopandroid.ui.example.ExampleScreen
 import com.gtg.electroshopandroid.ui.screen.main.MainScreen
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ElectroShopAndroidTheme {
                 App()
+//                ExampleScreen() // Test call api
             }
         }
     }
