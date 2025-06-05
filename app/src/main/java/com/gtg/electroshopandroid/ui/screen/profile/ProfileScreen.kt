@@ -1,17 +1,229 @@
 package com.gtg.electroshopandroid.ui.screen.profile
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.AddShoppingCart
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SupportAgent
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gtg.electroshopandroid.R
 
 @Composable
+fun CategoryItem(
+    title: String,
+    leadingIcon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 10.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                tint = Color.Black
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+        }
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = "Arrow",
+            tint = Color.Black
+        )
+    }
+}
+
+@Composable
+fun CategoryItem2(
+    title: String,
+    leadingIcon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 8.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = null,
+                tint = Color.Red
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Red,
+                fontSize = 18.sp
+            )
+        }
+
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = "Arrow",
+            tint = Color.Red
+        )
+    }
+}
+
+@Composable
 fun ProfileScreen() {
+
+    val categories = listOf(
+        "Hồ sơ cá nhân" to Icons.Default.Person,
+        "Đơn hàng của bạn" to Icons.Default.AddShoppingCart,
+        "Lịch sử duyệt sản phẩm" to Icons.Default.History,
+        "Cài đặt" to Icons.Default.Settings,
+        "Hỗ trợ khách hàng" to Icons.Default.SupportAgent,
+        "Thông báo" to Icons.Default.Notifications,
+    )
+    val categories2 = listOf(
+        "Đăng xuất" to Icons.AutoMirrored.Filled.ExitToApp,
+        "Xóa tài khoản" to Icons.Default.Delete
+    )
+
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = stringResource(R.string.profile))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(100.dp)
+            )
+            Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
+            Text(
+                text = "J1ckay",
+                textAlign = TextAlign.Center,
+                fontSize = 24.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.fillMaxHeight(0.01f))
+            Text(
+                text = "huydangdo2003@gmail.com",
+                color = Color.Gray,
+            )
+            Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp)) // bo tròn
+                    .background(Color(0xFFBDBDBD)) // màu khác với background
+            ) {
+                categories.forEachIndexed { index, (title, icon) ->
+                    val topPadding = if (index == 0) 8.dp else 0.dp
+                    val bottomPadding = if (index == categories.lastIndex) 8.dp else 0.dp
+                    CategoryItem(
+                        title = title,
+                        leadingIcon = icon,
+                        onClick = {
+                            //viewModel.onCategoryClicked(title)
+                        },
+                        modifier = Modifier
+                            .padding(top = topPadding, bottom = bottomPadding)
+
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp)) // bo tròn
+                    .background(Color(0xFFBDBDBD)) // màu khác với background
+            ) {
+                categories2.forEachIndexed { index, (title, icon) ->
+                    val topPadding = if (index == 0) 8.dp else 0.dp
+                    val bottomPadding = if (index == categories2.lastIndex) 8.dp else 0.dp
+                    CategoryItem2(
+                        title = title,
+                        leadingIcon = icon,
+                        onClick = {
+                            //viewModel.onCategoryClicked(title)
+                        },
+                        modifier = Modifier
+                            .padding(top = topPadding, bottom = bottomPadding)
+
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
+@Preview
+@Composable
+fun PreviewProfileScreen(){
+    Box(
+        modifier = Modifier
+            .size(360.dp, 640.dp)
+            .border(2.dp, Color.Black)
+            .background(Color.White),
+        contentAlignment = Alignment.Center,
+    ) {
+        ProfileScreen()
     }
 }

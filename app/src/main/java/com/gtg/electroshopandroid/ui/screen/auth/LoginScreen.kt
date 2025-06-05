@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -29,6 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +58,8 @@ fun LoginScreen(
     val password by viewModel.password
     val passwordVisible by viewModel.passwordVisible
     val loginSuccess by viewModel.loginSuccess
+    var rememberMeChecked by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
@@ -128,6 +134,29 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(56.dp)
             )
+            Spacer(modifier = Modifier.fillMaxHeight(0.02f))
+            Row(modifier = Modifier.fillMaxWidth()){
+                RememberMeRow(
+                    checked = rememberMeChecked,
+                    onCheckedChange = { rememberMeChecked = it },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(top = 0.dp, bottom = 0.dp)
+                )
+                Text(
+                    text = "Quên mật khẩu?",
+                    fontSize = 16.sp,
+                    //color = Color(0xFF2196F3), // màu xanh
+                    //textDecoration = TextDecoration.Underline, // gạch chân
+                    modifier = Modifier.clickable {
+                        // gọi api quên mật khẩu
+                    }
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.End,
+                )
+            }
+
 
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
 
@@ -164,6 +193,33 @@ fun LoginScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun RememberMeRow(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier
+                .size(18.dp),
+        )
+
+        Text(
+            text = "Ghi nhớ tôi",
+            fontSize = 16.sp,
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .clickable { onCheckedChange(!checked) } // cho phép click vào text cũng toggle checkbox
+        )
     }
 }
 
