@@ -13,6 +13,7 @@ import com.gtg.electroshopandroid.data.repository.ExampleRepository
 import com.gtg.electroshopandroid.data.repository.ExampleRepositoryImpl
 import com.gtg.electroshopandroid.data.network.OrderHistoryApiService
 import com.gtg.electroshopandroid.data.network.RatingApiService
+import com.gtg.electroshopandroid.data.network.RecommendApiService
 import com.gtg.electroshopandroid.data.repository.CategoryRepository
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepositoryImpl
@@ -21,6 +22,8 @@ import com.gtg.electroshopandroid.data.repository.ProductHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductRepository
 import com.gtg.electroshopandroid.data.repository.ProductRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.RatingRepository
+import com.gtg.electroshopandroid.data.repository.RecommendRepository
+import com.gtg.electroshopandroid.data.repository.RecommendRepositoryImpl
 import com.gtg.electroshopandroid.preferences.TokenPreferences
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -38,6 +41,7 @@ interface AppContainer {
     val tokenPreferences: TokenPreferences
     val ratingRepository: RatingRepository
     val categoryRepository: CategoryRepository
+    val recommendRepository: RecommendRepository
 }
 
 class DefaultAppContainer(
@@ -86,10 +90,10 @@ class DefaultAppContainer(
     private val productApiService: ProductApiService by lazy {
         retrofit.create(ProductApiService::class.java)
     }
-
     override val productRepository: ProductRepository by lazy {
         ProductRepositoryImpl(productApiService)
     }
+
     private val ratingApiService: RatingApiService by lazy {
         retrofit.create(RatingApiService::class.java)
     }
@@ -104,6 +108,16 @@ class DefaultAppContainer(
     override val categoryRepository: CategoryRepository by lazy {
         CategoryRepository(categoryApiService)
     }
+
+
+    private val recommendApiService: RecommendApiService by lazy {
+            retrofit.create(RecommendApiService::class.java)
+    }
+    override val recommendRepository: RecommendRepository by lazy {
+        RecommendRepositoryImpl(recommendApiService)
+    }
+
+
     private val orderHistoryApiService: OrderHistoryApiService by lazy {
         retrofit.create(OrderHistoryApiService::class.java)
     }

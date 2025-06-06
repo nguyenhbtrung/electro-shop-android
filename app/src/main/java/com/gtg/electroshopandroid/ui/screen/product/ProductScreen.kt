@@ -24,6 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.data.model.ProductDto
@@ -35,6 +38,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.ui.zIndex
 import com.gtg.electroshopandroid.data.model.RatingDto
 import com.gtg.electroshopandroid.ui.screen.rating.RatingUiState
 import com.gtg.electroshopandroid.ui.screen.rating.RatingViewModel
@@ -48,10 +52,9 @@ fun formatPrice(price: Double): String {
     return formatter.format(price)
 }
 @Composable
-fun ProductScreen(productId: Int) {
+fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
     val viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory)
     val productUiState = viewModel.productUiState
-    val scrollState = rememberScrollState()
     var quantity by remember { mutableStateOf(1) }
 
     LaunchedEffect(productId) {
@@ -64,49 +67,93 @@ fun ProductScreen(productId: Int) {
         is ProductUiState.Success -> {
             val product = (productUiState as ProductUiState.Success).product
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                // Nội dung cuộn được
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFF5F5F5))
+            ) {
+                // Nút quay lại ở đầu
+                IconButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .size(40.dp)
+                        .background(Color.White, shape = CircleShape)
+                        .border(1.dp, Color.LightGray, shape = CircleShape)
+                        .align(Alignment.TopStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Quay lại",
+                        tint = Color.Black
+                    )
+                }
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(scrollState)
-                        .padding(bottom = 80.dp) // chừa không gian cho BottomBar
-                        .padding(16.dp)
+                        .padding(top = 64.dp) // Chừa chỗ cho nút
                 ) {
-                    ProductImageCarousel(product = product)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = product.name,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    if (product.discountedPrice < product.originalPrice) {
-                        Text(
-                            text = "${formatPrice(product.discountedPrice)}₫",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color.Red
-                        )
-                        Text(
-                            text = "${formatPrice(product.originalPrice)}₫",
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            textDecoration = TextDecoration.LineThrough
-                        )
-                    } else {
-                        Text(
-                            text = "${formatPrice(product.originalPrice)}₫",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
+                    // Ảnh sản phẩm
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF5F5F5))
+                            .padding(top = 16.dp, bottom = 8.dp)
+                    ) {
+                        ProductImageCarousel(product = product)
                     }
 
-                    ProductTabs(product = product)
-                    RatingSection(productId = productId)
+                    // Nội dung bo góc trên
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+                        color = Color.White,
+                        shadowElevation = 4.dp
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = product.name,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            if (product.discountedPrice < product.originalPrice) {
+                                Text(
+                                    text = "${formatPrice(product.discountedPrice)}₫",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    color = Color.Red
+                                )
+                                Text(
+                                    text = "${formatPrice(product.originalPrice)}₫",
+                                    fontSize = 14.sp,
+                                    color = Color.Gray,
+                                    textDecoration = TextDecoration.LineThrough
+                                )
+                            } else {
+                                Text(
+                                    text = "${formatPrice(product.originalPrice)}₫",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp
+                                )
+                            }
+
+                            ProductTabs(product = product)
+                            RatingSection(productId = productId)
+                            Spacer(modifier = Modifier.height(80.dp))
+                        }
+                    }
                 }
 
-                // BottomBar cố định dưới cùng
+                // Bottom bar cố định
                 BottomBar(
                     quantity = quantity,
                     onIncrement = { quantity++ },
@@ -120,6 +167,9 @@ fun ProductScreen(productId: Int) {
         }
     }
 }
+
+
+
 
 @Composable
 fun ProductImageCarousel(product: ProductDto) {
@@ -234,44 +284,82 @@ fun PagerIndicator(
 @Composable
 fun ProductTabs(product: ProductDto) {
     var selectedTab by remember { mutableStateOf(0) }
-
-    Row(
+    val tabs = listOf("Mô tả sản phẩm", "Chính sách bán hàng")
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+            .padding(horizontal = 8.dp) // 👉 Thêm padding ngang cho toàn bộ Tabs
     ) {
-        val tabs = listOf("Mô tả sản phẩm", "Chính sách bán hàng")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp), // padding dọc nhẹ
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            tabs.forEachIndexed { index, title ->
+                val isSelected = selectedTab == index
 
-        tabs.forEachIndexed { index, title ->
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(if (selectedTab == index) Color(0xFF4CAF50) else Color(0xFFE0E0E0)) // Xanh lá vs xám nhạt
-                    .clickable { selectedTab = index }
-                    .padding(vertical = 8.dp, horizontal = 12.dp)
-            ) {
-                Text(
-                    text = title,
-                    color = if (selectedTab == index) Color.White else Color.Black
-                )
+                Box(
+                    modifier = Modifier
+                        .zIndex(if (isSelected) 1f else 0f) // 👉 Cho tab đang chọn nổi lên
+                        .offset(y = if (isSelected) (-4).dp else 0.dp) // 👉 Đẩy tab chọn lên nhẹ
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            if (isSelected) Color(0xFF4CAF50) else Color(0xFFE0E0E0)
+                        )
+                        .clickable { selectedTab = index }
+                        .padding(vertical = 8.dp, horizontal = 12.dp)
+                ) {
+                    Text(
+                        text = title,
+                        color = if (isSelected) Color.White else Color.Black
+                    )
+                }
             }
         }
     }
 
 
     if (selectedTab == 0) {
-        Text(
-            text = product.info,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            color = Color.DarkGray,
-        )
+        Column(
+            modifier = Modifier.fillMaxWidth() // không padding ngang nữa, để căn sát lề cha
+        ) {
+            Text(
+                text = product.info,
+                modifier = Modifier.fillMaxWidth(),
+                color = Color.DarkGray
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Danh mục của sản phẩm:",
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                product.categories.forEach { category ->
+                    Text(
+                        text = category.name,
+                        color = Color(0xFF2196F3),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable {
+                                // TODO
+                            }
+                            .background(Color(0xFFE3F2FD))
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+        }
     } else {
         Box(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(top = 16.dp)
                 .fillMaxWidth()
                 .background(Color.White)
                 .border(1.dp, Color.Black)
@@ -285,6 +373,7 @@ fun ProductTabs(product: ProductDto) {
             }
         }
     }
+
 }
 
 @Composable
@@ -294,7 +383,6 @@ fun RatingSection(
 ) {
     var showComments by remember { mutableStateOf(false) }
 
-    // Gọi API ngay khi composable được tạo
     LaunchedEffect(key1 = productId) {
         ratingViewModel.getRatingsByProductId(productId)
     }
@@ -457,7 +545,7 @@ fun BottomBar(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00C853)),
                 modifier = Modifier.padding(end = 8.dp)
             ) {
-                Text("ADD TO CART", color = Color.Black)
+                Text("THÊM VÀO GIỎ HÀNG", color = Color.Black)
             }
         }
     }
