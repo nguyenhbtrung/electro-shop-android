@@ -135,6 +135,7 @@ fun ProductImageCarousel(product: ProductDto) {
                     )
                 }
 
+
                 // Hiển thị nhãn giảm giá nếu có
                 if (product.discountValue > 0) {
                     val isPercentage = product.discountType.equals("Percentage", ignoreCase = true)
@@ -273,6 +274,11 @@ fun RatingSection(
 ) {
     var showComments by remember { mutableStateOf(false) }
 
+    // Gọi API ngay khi composable được tạo
+    LaunchedEffect(key1 = productId) {
+        ratingViewModel.getRatingsByProductId(productId)
+    }
+
     val ratingUiState = ratingViewModel.ratingUiState
 
     Column(modifier = Modifier.padding(16.dp)) {
@@ -308,9 +314,6 @@ fun RatingSection(
             modifier = Modifier
                 .padding(top = 4.dp)
                 .clickable {
-                    if (!showComments) {
-                        ratingViewModel.getRatingsByProductId(productId)
-                    }
                     showComments = !showComments
                 }
         )
