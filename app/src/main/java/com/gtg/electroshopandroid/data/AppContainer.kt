@@ -7,6 +7,9 @@ import com.gtg.electroshopandroid.data.network.ProductApiService
 import com.gtg.electroshopandroid.data.network.ProductHistoryApiService
 import com.gtg.electroshopandroid.data.repository.ExampleRepository
 import com.gtg.electroshopandroid.data.repository.ExampleRepositoryImpl
+import com.gtg.electroshopandroid.data.network.OrderHistoryApiService
+import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
+import com.gtg.electroshopandroid.data.repository.OrderHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepository
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductRepository
@@ -23,6 +26,7 @@ interface AppContainer {
     val exampleRepository: ExampleRepository
     val productHistoryRepository: ProductHistoryRepository
     val productRepository :ProductRepository
+    val orderHistoryRepository: OrderHistoryRepository
 }
 
 class DefaultAppContainer(
@@ -76,4 +80,12 @@ class DefaultAppContainer(
     override val productRepository: ProductRepository by lazy {
         ProductRepositoryImpl(productApiService)
     }
+
+    private val orderHistoryApiService: OrderHistoryApiService by lazy {
+        retrofit.create(OrderHistoryApiService::class.java)
+    }
+    override val orderHistoryRepository: OrderHistoryRepository by lazy {
+        OrderHistoryRepositoryImpl(orderHistoryApiService)
+    }
+
 }
