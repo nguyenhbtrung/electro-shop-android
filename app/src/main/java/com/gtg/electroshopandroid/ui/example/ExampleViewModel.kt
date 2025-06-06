@@ -15,13 +15,21 @@ import retrofit2.HttpException
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.gtg.electroshopandroid.data.model.ExampleDto
+import com.gtg.electroshopandroid.data.repository.ProductHistoryRepository
 
-class ExampleViewModel(private val exampleRepository: ExampleRepository) : ViewModel() {
+class ExampleViewModel(
+    private val exampleRepository: ExampleRepository,
+    private val productHistoryRepository: ProductHistoryRepository
+) : ViewModel() {
     var exampleUiState: ExampleUiState by mutableStateOf(ExampleUiState.Loading)
+        private set
+
+    var historyUiState: HistoryUiState by mutableStateOf(HistoryUiState.Loading)
         private set
 
     init {
         getExample()
+        getHistory()
     }
 
     fun getExample() {
@@ -37,12 +45,29 @@ class ExampleViewModel(private val exampleRepository: ExampleRepository) : ViewM
         }
     }
 
+    fun getHistory() {
+        viewModelScope.launch {
+            historyUiState = HistoryUiState.Loading
+            historyUiState = try {
+                HistoryUiState.Success(productHistoryRepository.getHistory())
+            } catch (e: IOException) {
+                HistoryUiState.Error
+            } catch (e: HttpException) {
+                HistoryUiState.Error
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ElectroShopApplication)
                 val exampleRepository = application.container.exampleRepository
-                ExampleViewModel(exampleRepository = exampleRepository)
+                val productHistoryRepository = application.container.productHistoryRepository
+                ExampleViewModel(
+                    exampleRepository = exampleRepository,
+                    productHistoryRepository = productHistoryRepository
+                )
             }
         }
     }
