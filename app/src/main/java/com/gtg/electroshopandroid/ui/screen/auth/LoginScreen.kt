@@ -49,9 +49,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.R
-import com.gtg.electroshopandroid.data.network.AuthApiService
-import com.gtg.electroshopandroid.data.repository.AuthRepositoryImpl
-import com.gtg.electroshopandroid.preferences.TokenPreferences
 
 @Composable
 fun LoginScreen(

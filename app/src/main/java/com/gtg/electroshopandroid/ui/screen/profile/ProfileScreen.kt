@@ -51,12 +51,12 @@ fun CategoryItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 10.dp, horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            modifier = modifier
+                .fillMaxWidth()
+                .clickable { onClick() }
+                .padding(vertical = 10.dp, horizontal = 16.dp),
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -204,7 +204,6 @@ fun ProfileScreen() {
                         },
                         modifier = Modifier
                             .padding(top = topPadding, bottom = bottomPadding)
-
                     )
                 }
             }

@@ -17,7 +17,7 @@ import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
-    NavHost(navController, startDestination = Screen.Home.route) {
+    NavHost(navController, startDestination = Screen.Login.route) {
         composable(Screen.Login.route) {
             LoginScreen(
                 onSignupClick = {
