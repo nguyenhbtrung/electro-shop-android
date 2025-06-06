@@ -20,9 +20,4 @@ data class RatingDto(
     @SerialName("ratingContent")
     val ratingContent: String,
 
-    @SerialName("status")
-    val status: String,
-
-    @SerialName("timeStamp")
-    val timeStamp: String
 )

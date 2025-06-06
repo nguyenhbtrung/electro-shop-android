@@ -92,10 +92,6 @@ fun ProductScreen(productId: Int) {
                     )
                 }
                 ProductTabs(product = product)
-//                RatingSection(
-//                    productId = productId,
-//                    averageRating = product.averageRating ?: 0.0
-//                )
             }
         }
     }

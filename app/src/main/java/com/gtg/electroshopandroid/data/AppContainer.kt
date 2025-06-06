@@ -11,12 +11,14 @@ import com.gtg.electroshopandroid.data.network.ProductHistoryApiService
 import com.gtg.electroshopandroid.data.repository.ExampleRepository
 import com.gtg.electroshopandroid.data.repository.ExampleRepositoryImpl
 import com.gtg.electroshopandroid.data.network.OrderHistoryApiService
+import com.gtg.electroshopandroid.data.network.RatingApiService
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepository
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductRepository
 import com.gtg.electroshopandroid.data.repository.ProductRepositoryImpl
+import com.gtg.electroshopandroid.data.repository.RatingRepository
 import com.gtg.electroshopandroid.preferences.TokenPreferences
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -32,13 +34,13 @@ interface AppContainer {
     val orderHistoryRepository: OrderHistoryRepository
     val authRepository: AuthRepository
     val tokenPreferences: TokenPreferences
+    val ratingRepository: RatingRepository
 }
 
 class DefaultAppContainer(
     private val context: Context
 ) : AppContainer {
     private val baseUrl = "http://10.0.2.2:5030/"
-
     override val tokenPreferences by lazy {
         TokenPreferences(context)
     }
@@ -85,7 +87,13 @@ class DefaultAppContainer(
     override val productRepository: ProductRepository by lazy {
         ProductRepositoryImpl(productApiService)
     }
+    private val ratingApiService: RatingApiService by lazy {
+        retrofit.create(RatingApiService::class.java)
+    }
 
+    override val ratingRepository: RatingRepository by lazy {
+        RatingRepository(ratingApiService)
+    }
     private val orderHistoryApiService: OrderHistoryApiService by lazy {
         retrofit.create(OrderHistoryApiService::class.java)
     }
