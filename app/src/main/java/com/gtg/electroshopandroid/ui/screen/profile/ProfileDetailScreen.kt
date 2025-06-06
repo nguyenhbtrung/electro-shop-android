@@ -19,10 +19,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,12 +47,14 @@ import com.gtg.electroshopandroid.R
 fun ProfileDetailScreen(
     onBackToProfile: () -> Unit,
     onChangeSuccess: () -> Unit,
-
 ) {
     val viewModel: ProfileDetailViewModel = viewModel()
     val userName by viewModel.userName
+    val email by viewModel.email
+    val fullName by viewModel.fullName
+    val phoneNumber by viewModel.phoneNumber
+    val address by viewModel.address
     val scrollState = rememberScrollState()
-
 
     Scaffold(
         topBar = {
@@ -85,7 +90,6 @@ fun ProfileDetailScreen(
                     //.fillMaxWidth(0.8f)
                     .padding(horizontal = 32.dp)
                     .verticalScroll(scrollState), // enable scroll
-                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
@@ -96,59 +100,85 @@ fun ProfileDetailScreen(
                         .clip(CircleShape)
                         .size(100.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(0.08f))
+                Spacer(modifier = Modifier.height(20.dp))
                 Text("Tên Đăng Nhập:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
-                Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
+                Spacer(modifier = Modifier.height(5.dp))
                 OutlinedTextField(
                     value = userName,
-                    onValueChange = viewModel::onUserNameChanged,
-                    placeholder = { Text("Điền tên đăng nhập của bạn...") },
+                    onValueChange = {},
+                    placeholder = { Text("Tên đăng nhập") },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(0.08f))
-                Text("Tên Đăng Nhập:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
-                Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
+                Spacer(modifier = Modifier.height(15.dp))
+                Text("Email:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(5.dp))
                 OutlinedTextField(
-                    value = userName,
-                    onValueChange = viewModel::onUserNameChanged,
-                    placeholder = { Text("Điền tên đăng nhập của bạn...") },
+                    value = email,
+                    onValueChange = {},
+                    readOnly = true,
+                    placeholder = { Text("Email") },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-                Text("Tên Đăng Nhập:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
-                Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
+                Spacer(modifier = Modifier.height(15.dp))
+                Text("Tên Người Dùng:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(5.dp))
                 OutlinedTextField(
-                    value = userName,
-                    onValueChange = viewModel::onUserNameChanged,
-                    placeholder = { Text("Điền tên đăng nhập của bạn...") },
+                    value = fullName,
+                    onValueChange = viewModel::onFullNameChanged,
+                    placeholder = { Text("Tên người dùng") },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxHeight(0.05f))
-                Text("Tên Đăng Nhập:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
-                Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
+                Spacer(modifier = Modifier.height(15.dp))
+                Text("Số điện thoại:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(5.dp))
                 OutlinedTextField(
-                    value = userName,
-                    onValueChange = viewModel::onUserNameChanged,
-                    placeholder = { Text("Điền tên đăng nhập của bạn...") },
+                    value = phoneNumber,
+                    onValueChange = viewModel::onPhoneNumberChanged,
+                    placeholder = { Text("Số điện thoại") },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
                 )
-
+                Spacer(modifier = Modifier.height(15.dp))
+                Text("Địa chỉ:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(5.dp))
+                OutlinedTextField(
+                    value = address,
+                    onValueChange = viewModel::onAddressChange,
+                    placeholder = { Text("Địa chỉ") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                )
+                Button(
+                    onClick = viewModel::onChangeClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Blue,
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Đăng Nhập", fontSize = 20.sp)
+                }
             }
         }
     }
@@ -159,7 +189,7 @@ fun ProfileDetailScreen(
 fun PreviewSignUpScreen() {
     Box(
         modifier = Modifier
-            .size(360.dp, 640.dp)
+            .size(360.dp, 1000.dp)
             .border(2.dp, Color.Black)
             .background(Color.White),
         contentAlignment = Alignment.Center,
