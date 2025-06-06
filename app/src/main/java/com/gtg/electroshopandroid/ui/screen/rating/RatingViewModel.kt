@@ -1,4 +1,4 @@
-package com.gtg.electroshopandroid.ui.viewmodel
+package com.gtg.electroshopandroid.ui.screen.rating
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -26,7 +26,8 @@ class RatingViewModel(
 
     var ratingUiState: RatingUiState by mutableStateOf(RatingUiState.Loading)
         private set
-
+    var errorMessage: String? by mutableStateOf(null)
+        private set
     fun getRatingsByProductId(productId: Int) {
         viewModelScope.launch {
             ratingUiState = RatingUiState.Loading
@@ -34,8 +35,13 @@ class RatingViewModel(
                 val result = ratingRepository.getRatingsByProductId(productId)
                 RatingUiState.Success(result)
             } catch (e: IOException) {
+                errorMessage = "Network error: ${e.message}"
                 RatingUiState.Error
             } catch (e: HttpException) {
+                errorMessage = "HTTP error ${e.code()}: ${e.message()}"
+                RatingUiState.Error
+            } catch (e: Exception) {
+                errorMessage = "Unexpected error: ${e.message}"
                 RatingUiState.Error
             }
         }
