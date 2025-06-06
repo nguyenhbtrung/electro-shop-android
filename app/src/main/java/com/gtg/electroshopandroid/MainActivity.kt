@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ElectroShopAndroidTheme {
                 App()
+                //ProductScreen(12)
             }
         }
 //        Test authentication api

@@ -32,6 +32,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import com.gtg.electroshopandroid.data.model.RatingDto
 import com.gtg.electroshopandroid.ui.screen.rating.RatingUiState
 import com.gtg.electroshopandroid.ui.screen.rating.RatingViewModel
@@ -49,6 +52,8 @@ fun ProductScreen(productId: Int) {
     val viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory)
     val productUiState = viewModel.productUiState
     val scrollState = rememberScrollState()
+    var quantity by remember { mutableStateOf(1) }
+
     LaunchedEffect(productId) {
         viewModel.getProductById(productId)
     }
@@ -58,44 +63,59 @@ fun ProductScreen(productId: Int) {
         is ProductUiState.Error -> Text("Không thể tải sản phẩm.")
         is ProductUiState.Success -> {
             val product = (productUiState as ProductUiState.Success).product
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(16.dp)
-            ) {
-                ProductImageCarousel(product = product)
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = product.name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                if (product.discountedPrice < product.originalPrice) {
-                    // Nếu có giảm giá → hiển thị cả giá gốc và giá giảm
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                // Nội dung cuộn được
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(bottom = 80.dp) // chừa không gian cho BottomBar
+                        .padding(16.dp)
+                ) {
+                    ProductImageCarousel(product = product)
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "${formatPrice(product.discountedPrice)}₫",
+                        text = product.name,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Color.Red
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    Text(
-                        text = "${formatPrice(product.originalPrice)}₫",
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        textDecoration = TextDecoration.LineThrough
-                    )
-                } else {
-                    // Không giảm giá → chỉ hiển thị 1 giá
-                    Text(
-                        text = "${formatPrice(product.originalPrice)}₫",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
+                    if (product.discountedPrice < product.originalPrice) {
+                        Text(
+                            text = "${formatPrice(product.discountedPrice)}₫",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color.Red
+                        )
+                        Text(
+                            text = "${formatPrice(product.originalPrice)}₫",
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            textDecoration = TextDecoration.LineThrough
+                        )
+                    } else {
+                        Text(
+                            text = "${formatPrice(product.originalPrice)}₫",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }
+
+                    ProductTabs(product = product)
+                    RatingSection(productId = productId)
                 }
-                ProductTabs(product = product)
-                RatingSection(productId = productId)
+
+                // BottomBar cố định dưới cùng
+                BottomBar(
+                    quantity = quantity,
+                    onIncrement = { quantity++ },
+                    onDecrement = { if (quantity > 1) quantity-- },
+                    onAddToCart = { /* xử lý thêm vào giỏ hàng */ },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                )
             }
         }
     }
@@ -358,26 +378,87 @@ fun RatingItem(rating: RatingDto) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            .border(1.dp, Color.Gray, RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
             .padding(12.dp)
     ) {
         Column {
-            Text(text = rating.userName, fontWeight = FontWeight.Bold)
+            // Hàng chứa: Tên người dùng bên trái + sao bên phải
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = rating.userName,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f) // đẩy phần còn lại sang phải
+                )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                repeat(rating.ratingScore) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFC107)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    repeat(rating.ratingScore) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(text = rating.ratingContent)
+            Text(
+                text = rating.ratingContent,
+                fontSize = 14.sp,
+                lineHeight = 18.sp
+            )
+        }
+    }
+}
+@Composable
+fun BottomBar(
+    quantity: Int,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit,
+    onAddToCart: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .background(Color.White.copy(alpha = 0.95f))
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(50))
+                .background(Color.LightGray),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+            ) {
+                IconButton(onClick = onDecrement) {
+                    Text("-", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                }
+                Text(text = quantity.toString(), fontWeight = FontWeight.Bold)
+                IconButton(onClick = onIncrement) {
+                    Text("+", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            Button(
+                onClick = onAddToCart,
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00C853)),
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
+                Text("ADD TO CART", color = Color.Black)
+            }
         }
     }
 }

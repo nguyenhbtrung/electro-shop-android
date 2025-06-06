@@ -14,6 +14,7 @@ import com.gtg.electroshopandroid.ui.screen.home.HomeScreen
 import com.gtg.electroshopandroid.ui.screen.messages.MessagesScreen
 import com.gtg.electroshopandroid.ui.screen.notifications.NotificationsScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryScreen
+import com.gtg.electroshopandroid.ui.screen.profile.ProfileDetailScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
 
 @Composable
@@ -51,6 +52,18 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.Favorites.route){ FavoritesScreen() }
         composable(Screen.Profile.route) {
             ProfileScreen(navController)
+        }
+
+        composable(Screen.ProfileDetail.route) {
+            ProfileDetailScreen(
+                onBackToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                onChangeSuccess = {
+                    navController.navigate(Screen.Profile.route)
+                }
+
+            )
         }
 
         composable(Screen.OrderHistory.route) {
