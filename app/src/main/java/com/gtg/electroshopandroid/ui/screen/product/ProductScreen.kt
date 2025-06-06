@@ -378,26 +378,41 @@ fun RatingItem(rating: RatingDto) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            .border(1.dp, Color.Gray, RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
             .padding(12.dp)
     ) {
         Column {
-            Text(text = rating.userName, fontWeight = FontWeight.Bold)
+            // Hàng chứa: Tên người dùng bên trái + sao bên phải
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = rating.userName,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f) // đẩy phần còn lại sang phải
+                )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                repeat(rating.ratingScore) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFC107)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    repeat(rating.ratingScore) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(text = rating.ratingContent)
+            Text(
+                text = rating.ratingContent,
+                fontSize = 14.sp,
+                lineHeight = 18.sp
+            )
         }
     }
 }
