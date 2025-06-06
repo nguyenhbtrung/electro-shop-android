@@ -149,7 +149,7 @@ fun CartItemCard(
     val imageUrls = cart.productImage.toAndroidAccessibleUrl()
     val textpc=cart.productName
     val pricepc=cart.price
-    val quantipc=cart.quantity
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -273,7 +273,7 @@ fun CartItemCard(
                     }
 
                     Text(
-                        text = quantipc.toString(),
+                        text = quantity.toString(),
                         modifier = Modifier.width(36.dp),
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
