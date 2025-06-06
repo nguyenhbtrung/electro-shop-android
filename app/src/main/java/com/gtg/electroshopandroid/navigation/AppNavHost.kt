@@ -13,11 +13,12 @@ import com.gtg.electroshopandroid.ui.screen.favorites.FavoritesScreen
 import com.gtg.electroshopandroid.ui.screen.home.HomeScreen
 import com.gtg.electroshopandroid.ui.screen.messages.MessagesScreen
 import com.gtg.electroshopandroid.ui.screen.notifications.NotificationsScreen
+import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
-    NavHost(navController, startDestination = Screen.Login.route) {
+    NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Login.route) {
             LoginScreen(
                 onSignupClick = {
@@ -41,7 +42,6 @@ fun AppNavHost(navController: NavHostController) {
                         popUpTo(Screen.Signup.route) { inclusive = true } // Xóa màn login khỏi backstack
                     }
                 }
-
             )
         }
 
@@ -49,7 +49,13 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.Explore.route)  { ExploreScreen() }
         composable(Screen.Cart.route)     { CartScreen() }
         composable(Screen.Favorites.route){ FavoritesScreen() }
-        composable(Screen.Profile.route)  { ProfileScreen() }
+        composable(Screen.Profile.route) {
+            ProfileScreen(navController)
+        }
+
+        composable(Screen.OrderHistory.route) {
+            OrderHistoryScreen(onBack = { navController.popBackStack() })
+        }
 
         composable(Screen.Messages.route) {
             MessagesScreen(onBack = { navController.popBackStack() })

@@ -12,4 +12,9 @@
     <string name="msg_screen_title">Nhắn tin với cửa hàng</string>
     <string name="login">Đăng nhập</string>
     <string name="signup">Đăng ký</string>
+    <string name="order_history">Đơn Hàng</string>
+    <string name="profile_detail">Hồ sơ cá nhân</string>
+    <string name="settings">Cài đặt</string>
+    <string name="browsing_history">Lịch sử duyệt</string>
+    <string name="support">Hỗ trợ</string>
 </resources>

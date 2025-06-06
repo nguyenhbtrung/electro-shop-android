@@ -41,7 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.gtg.electroshopandroid.R
+import com.gtg.electroshopandroid.data.model.Screen
 
 @Composable
 fun CategoryItem(
@@ -124,15 +127,15 @@ fun CategoryItem2(
 }
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: NavHostController) {
 
     val categories = listOf(
-        "Hồ sơ cá nhân" to Icons.Default.Person,
-        "Đơn hàng của bạn" to Icons.Default.AddShoppingCart,
-        "Lịch sử duyệt sản phẩm" to Icons.Default.History,
-        "Cài đặt" to Icons.Default.Settings,
-        "Hỗ trợ khách hàng" to Icons.Default.SupportAgent,
-        "Thông báo" to Icons.Default.Notifications,
+        Triple("Hồ sơ cá nhân", Icons.Default.Person, Screen.ProfileDetail.route),
+        Triple("Đơn hàng của bạn", Icons.Default.AddShoppingCart, Screen.OrderHistory.route),
+        Triple("Lịch sử duyệt sản phẩm", Icons.Default.History, Screen.BrowsingHistory.route),
+        Triple("Cài đặt", Icons.Default.Settings, Screen.Settings.route),
+        Triple("Hỗ trợ khách hàng", Icons.Default.SupportAgent, Screen.Support.route),
+        Triple("Thông báo", Icons.Default.Notifications, Screen.Notifications.route)
     )
     val categories2 = listOf(
         "Đăng xuất" to Icons.AutoMirrored.Filled.ExitToApp,
@@ -172,18 +175,17 @@ fun ProfileScreen() {
                     .clip(RoundedCornerShape(16.dp)) // bo tròn
                     .background(Color(0xFFBDBDBD)) // màu khác với background
             ) {
-                categories.forEachIndexed { index, (title, icon) ->
+                categories.forEachIndexed { index, (title, icon, route) ->
                     val topPadding = if (index == 0) 8.dp else 0.dp
                     val bottomPadding = if (index == categories.lastIndex) 8.dp else 0.dp
                     CategoryItem(
                         title = title,
                         leadingIcon = icon,
                         onClick = {
-                            //viewModel.onCategoryClicked(title)
+                            navController.navigate(route)
                         },
                         modifier = Modifier
                             .padding(top = topPadding, bottom = bottomPadding)
-
                     )
                 }
             }
@@ -223,6 +225,7 @@ fun PreviewProfileScreen(){
             .background(Color.White),
         contentAlignment = Alignment.Center,
     ) {
-        ProfileScreen()
+        val navController = rememberNavController()
+        ProfileScreen(navController = navController)
     }
 }

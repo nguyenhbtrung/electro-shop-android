@@ -15,7 +15,7 @@ import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderHistoryScreen() {
+fun OrderHistoryScreen(onBack: () -> Unit) {
     val context = LocalContext.current.applicationContext as ElectroShopApplication
     val orderHistoryRepository: OrderHistoryRepository = context.container.orderHistoryRepository
 
