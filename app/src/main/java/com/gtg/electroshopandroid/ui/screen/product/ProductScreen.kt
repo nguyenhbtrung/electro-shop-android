@@ -1,33 +1,47 @@
 package com.gtg.electroshopandroid.ui.screen.product
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.data.model.ProductDto
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.launch
-import com.google.accompanist.pager.HorizontalPagerIndicator
-
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.ui.unit.Dp
+import com.gtg.electroshopandroid.data.model.RatingDto
+import java.text.NumberFormat
+import java.util.Locale
 fun String.toAndroidAccessibleUrl(): String {
-    return this.replace("https://localhost", "http://10.0.2.2")
+    return this.replace(Regex("https://localhost(:\\d+)?"), "http://10.0.2.2:5030")
 }
-
+fun formatPrice(price: Double): String {
+    val formatter = NumberFormat.getInstance(Locale("vi", "VN"))
+    return formatter.format(price)
+}
 @Composable
 fun ProductScreen(productId: Int) {
     val viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory)
@@ -55,13 +69,33 @@ fun ProductScreen(productId: Int) {
                     fontSize = 20.sp,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Text(
-                    text = "Giá: ${product.discountedPrice}",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 18.sp,
-                    color = Color(0xFF388E3C) // màu xanh lá ví dụ
-                )
-                // Bạn có thể thêm các thông tin chi tiết khác ở đây
+                if (product.discountedPrice < product.originalPrice) {
+                    // Nếu có giảm giá → hiển thị cả giá gốc và giá giảm
+                    Text(
+                        text = "${formatPrice(product.discountedPrice)}₫",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.Red
+                    )
+                    Text(
+                        text = "${formatPrice(product.originalPrice)}₫",
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+                } else {
+                    // Không giảm giá → chỉ hiển thị 1 giá
+                    Text(
+                        text = "${formatPrice(product.originalPrice)}₫",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
+                ProductTabs(product = product)
+//                RatingSection(
+//                    productId = productId,
+//                    averageRating = product.averageRating ?: 0.0
+//                )
             }
         }
     }
@@ -69,8 +103,10 @@ fun ProductScreen(productId: Int) {
 
 @Composable
 fun ProductImageCarousel(product: ProductDto) {
-    val pagerState = rememberPagerState()
     val imageUrls = product.productImages.map { it.imageUrl.toAndroidAccessibleUrl() }
+    val pagerState = rememberPagerState(initialPage = 0) {
+        imageUrls.size
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -84,11 +120,10 @@ fun ProductImageCarousel(product: ProductDto) {
         ) {
             if (imageUrls.isNotEmpty()) {
                 HorizontalPager(
-                    count = imageUrls.size,
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
+                        .height(200.dp),
                 ) { page ->
                     AsyncImage(
                         model = imageUrls[page],
@@ -136,15 +171,99 @@ fun ProductImageCarousel(product: ProductDto) {
         Spacer(modifier = Modifier.height(8.dp))
 
         if (imageUrls.isNotEmpty()) {
-            HorizontalPagerIndicator(
-                pagerState = pagerState,
-                activeColor = Color.Blue,
-                inactiveColor = Color.DarkGray,
-                indicatorWidth = 8.dp,
-                indicatorHeight = 8.dp,
-                spacing = 8.dp,
+            PagerIndicator(
+                pageCount = imageUrls.size,
+                currentPage = pagerState.currentPage,
                 modifier = Modifier.padding(8.dp)
             )
         }
     }
 }
+
+@Composable
+fun PagerIndicator(
+    pageCount: Int,
+    currentPage: Int,
+    modifier: Modifier = Modifier,
+    activeColor: Color = Color.Blue,
+    inactiveColor: Color = Color.DarkGray,
+    indicatorWidth: Dp = 8.dp,
+    indicatorHeight: Dp = 8.dp,
+    spacing: Dp = 8.dp
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(pageCount) { index ->
+            Box(
+                modifier = Modifier
+                    .size(width = indicatorWidth, height = indicatorHeight)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(if (index == currentPage) activeColor else inactiveColor)
+            )
+
+            if (index < pageCount - 1) {
+                Spacer(modifier = Modifier.width(spacing))
+            }
+        }
+    }
+}
+@Composable
+fun ProductTabs(product: ProductDto) {
+    var selectedTab by remember { mutableStateOf(0) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        val tabs = listOf("Mô tả sản phẩm", "Chính sách bán hàng")
+
+        tabs.forEachIndexed { index, title ->
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (selectedTab == index) Color(0xFF4CAF50) else Color(0xFFE0E0E0)) // Xanh lá vs xám nhạt
+                    .clickable { selectedTab = index }
+                    .padding(vertical = 8.dp, horizontal = 12.dp)
+            ) {
+                Text(
+                    text = title,
+                    color = if (selectedTab == index) Color.White else Color.Black
+                )
+            }
+        }
+    }
+
+
+    if (selectedTab == 0) {
+        Text(
+            text = product.info,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            color = Color.DarkGray,
+        )
+    } else {
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+                .border(1.dp, Color.Black)
+                .padding(8.dp)
+        ) {
+            Column {
+                Text("• Miễn phí giao hàng toàn quốc")
+                Text("• Đổi trả trong 7 ngày")
+                Text("• Bảo hành chính hãng 12 tháng")
+                Text("• Tổng đài hỗ trợ 24/7")
+            }
+        }
+    }
+}
+
+
