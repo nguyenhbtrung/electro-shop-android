@@ -31,6 +31,7 @@ sealed class Screen(val route: String, val icon: ImageVector?, @StringRes val la
     data object Support : Screen("support", null, R.string.support)
     data object ReturnHistory : Screen("returnHistory", null, R.string.return_history)
 
+    data object OrderDetail : Screen("order_detail/{orderId}", null, R.string.order_detail)
 }
 
 val bottomNavItems = listOf(

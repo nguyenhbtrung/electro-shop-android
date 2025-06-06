@@ -22,6 +22,7 @@ import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.model.OrderDto
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import coil.compose.AsyncImage
+import androidx.navigation.NavHostController
 
 data class OrderItem(
     val id: Int,
@@ -74,6 +75,7 @@ fun OrderDto.toOrderItem(): OrderItem {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderHistoryScreen(
+    navController: NavHostController,
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current.applicationContext as ElectroShopApplication
@@ -186,7 +188,10 @@ fun OrderHistoryScreen(
                         contentPadding = PaddingValues(top = 16.dp)
                     ) {
                         items(filteredOrders) { order ->
-                            OrderHistoryCard(order = order)
+                            OrderHistoryCard(
+                                order = order,
+                                onDetailClick = { navController.navigate("order_detail/${order.id}") }
+                            )
                         }
                         item {
                             Card(
@@ -232,7 +237,10 @@ fun OrderHistoryScreen(
 }
 
 @Composable
-fun OrderHistoryCard(order: OrderItem) {
+fun OrderHistoryCard(
+    order: OrderItem,
+    onDetailClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -243,7 +251,6 @@ fun OrderHistoryCard(order: OrderItem) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Nội dung chính: ảnh, tên sản phẩm, số lượng, giá
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -292,13 +299,11 @@ fun OrderHistoryCard(order: OrderItem) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Hàng dưới cùng: Trạng thái đơn hàng (trái) và các nút (phải)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Trạng thái đơn hàng ở góc trái dưới
                 Text(
                     text = order.status,
                     color = when(order.status) {
@@ -312,10 +317,9 @@ fun OrderHistoryCard(order: OrderItem) {
                     fontWeight = FontWeight.Bold
                 )
 
-                // Các nút Chi tiết và Đánh giá
                 Row {
                     OutlinedButton(
-                        onClick = { /* Xử lý xem chi tiết */ },
+                        onClick = onDetailClick,
                         modifier = Modifier
                             .height(32.dp)
                             .padding(end = 4.dp),
