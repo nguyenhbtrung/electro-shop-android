@@ -2,8 +2,11 @@ package com.gtg.electroshopandroid.data
 
 import android.content.Context
 import com.gtg.electroshopandroid.data.interceptor.AuthInterceptor
+import com.gtg.electroshopandroid.data.network.AuthApiService
 import com.gtg.electroshopandroid.data.network.ExampleApiService
 import com.gtg.electroshopandroid.data.network.ProductHistoryApiService
+import com.gtg.electroshopandroid.data.repository.AuthRepository
+import com.gtg.electroshopandroid.data.repository.AuthRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ExampleRepository
 import com.gtg.electroshopandroid.data.repository.ExampleRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepository
@@ -19,6 +22,8 @@ import java.util.concurrent.TimeUnit
 interface AppContainer {
     val exampleRepository: ExampleRepository
     val productHistoryRepository: ProductHistoryRepository
+    val authRepository: AuthRepository
+    val tokenPreferences: TokenPreferences
 }
 
 class DefaultAppContainer(
@@ -26,7 +31,7 @@ class DefaultAppContainer(
 ) : AppContainer {
     private val baseUrl = "http://10.0.2.2:5030/"
 
-    private val tokenPreferences by lazy {
+    override val tokenPreferences by lazy {
         TokenPreferences(context)
     }
 
@@ -45,7 +50,7 @@ class DefaultAppContainer(
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(okHttpClient)
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(Json{ignoreUnknownKeys = true}.asConverterFactory("application/json".toMediaType()))
         .build()
 
     private val exampleApiService: ExampleApiService by lazy {
@@ -62,5 +67,13 @@ class DefaultAppContainer(
 
     override val productHistoryRepository: ProductHistoryRepository by lazy {
         ProductHistoryRepositoryImpl(productHistoryApiService)
+    }
+
+    private val authApiService: AuthApiService by lazy {
+        retrofit.create(AuthApiService::class.java)
+    }
+
+    override val authRepository: AuthRepository by lazy {
+        AuthRepositoryImpl(authApiService)
     }
 }

@@ -1,9 +1,21 @@
 package com.gtg.electroshopandroid.ui.screen.auth
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.gtg.electroshopandroid.data.model.AuthResponse
+import com.gtg.electroshopandroid.data.model.LoginRequest
+import com.gtg.electroshopandroid.data.repository.AuthRepository
+import com.gtg.electroshopandroid.preferences.TokenPreferences
+import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(
+    private val authRepository: AuthRepository,
+    private val tokenPreferences: TokenPreferences
+
+) : ViewModel() {
     var userName = mutableStateOf("")
         private set
 
@@ -26,14 +38,41 @@ class LoginViewModel : ViewModel() {
     }
 
     var loginSuccess = mutableStateOf(false)
+    var loginError = mutableStateOf<String?>(null)
+
 
     fun onLoginClick() {
-        if (userName.value == "admin" && password.value == "123") {
-            loginSuccess.value = true
-        } else {
-            // Báo lỗi nếu cần
+        // 1. Set state về null / loading (nếu muốn)
+        loginError.value = null
+        viewModelScope.launch {
+            try {
+                // 2. Gọi API login và nhận AuthResponse
+                val response: AuthResponse = authRepository.login(
+                    LoginRequest(
+                        userName = userName.value,
+                        password = password.value
+                    )
+                )
+                // 3. Lưu token vào DataStore qua TokenPreferences
+                tokenPreferences.updateAccessToken(response.token)
+                Log.d("LoginViewModel", "Login thành công, token: ${response.token}")
+
+                // 4. Đánh dấu login thành công
+                loginSuccess.value = true
+            } catch (e: Exception) {
+                Log.e("LoginViewModel", "Login thất bại: ${e.localizedMessage}")
+                // 5. Nếu có lỗi (mạng, 401, v.v.), set loginError
+                loginError.value = "Sai tài khoản hoặc mật khẩu"
+            }
         }
-        // Xử lý đăng nhập (gọi API, validate, log, v.v.)
-        println("Đăng nhập với: ${userName.value} / ${password.value}")
+    }
+    class LoginViewModelFactory(
+        private val authRepository: AuthRepository,
+        private val tokenPreferences: TokenPreferences
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            @Suppress("UNCHECKED_CAST")
+            return LoginViewModel(authRepository, tokenPreferences) as T
+        }
     }
 }
