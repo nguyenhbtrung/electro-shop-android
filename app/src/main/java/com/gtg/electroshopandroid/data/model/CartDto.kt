@@ -7,7 +7,7 @@ data class CartDto(
     val productId: Int,
 
     @SerialName("price")
-    val price: Int,
+    val price: Double,
 
     @SerialName("quantity")
     val quantity: Int,
