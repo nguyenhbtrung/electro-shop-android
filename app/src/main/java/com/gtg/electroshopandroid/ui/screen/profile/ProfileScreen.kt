@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -25,8 +28,11 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SupportAgent
+import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -128,12 +134,12 @@ fun CategoryItem2(
 
 @Composable
 fun ProfileScreen(navController: NavHostController) {
-
     val categories = listOf(
         Triple("Hồ sơ cá nhân", Icons.Default.Person, Screen.ProfileDetail.route),
         Triple("Đơn hàng của bạn", Icons.Default.AddShoppingCart, Screen.OrderHistory.route),
         Triple("Lịch sử duyệt sản phẩm", Icons.Default.History, Screen.BrowsingHistory.route),
         Triple("Cài đặt", Icons.Default.Settings, Screen.Settings.route),
+        Triple("Lịch sử hoàn trả", Icons.Default.Replay, Screen.ReturnHistory.route),
         Triple("Hỗ trợ khách hàng", Icons.Default.SupportAgent, Screen.Support.route),
         Triple("Thông báo", Icons.Default.Notifications, Screen.Notifications.route)
     )
@@ -146,8 +152,7 @@ fun ProfileScreen(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.85f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -157,19 +162,19 @@ fun ProfileScreen(navController: NavHostController) {
                     .clip(CircleShape)
                     .size(100.dp)
             )
-            Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = "J1ckay",
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.fillMaxHeight(0.01f))
+            Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = "huydangdo2003@gmail.com",
                 color = Color.Gray,
             )
-            Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+            Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp)) // bo tròn
@@ -189,7 +194,7 @@ fun ProfileScreen(navController: NavHostController) {
                     )
                 }
             }
-            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+            Spacer(modifier = Modifier.height(20.dp))
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp)) // bo tròn

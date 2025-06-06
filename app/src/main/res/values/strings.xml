@@ -17,5 +17,6 @@
     <string name="settings">Cài đặt</string>
     <string name="browsing_history">Lịch sử duyệt</string>
     <string name="support">Hỗ trợ</string>
+    <string name="return_history">Lịch sử hoàn trả</string>
     <string name="home_search_label">Tìm kiếm sản phẩm</string>
 </resources>

@@ -49,9 +49,7 @@ fun SignUpScreen(
     onBackToLogin: () -> Unit,
     onSignUpSuccess: () -> Unit
 ) {
-    val application = LocalContext.current.applicationContext as ElectroShopApplication
-    val factory = SignUpViewModelFactory(application.container.authRepository)
-    val viewModel: SignUpViewModel = viewModel(factory = factory)
+    val viewModel: SignUpViewModel = viewModel(factory = SignUpViewModel.Factory)
 
     val userName by viewModel.userName
     val password by viewModel.password
