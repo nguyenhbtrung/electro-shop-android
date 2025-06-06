@@ -16,6 +16,9 @@ import com.gtg.electroshopandroid.ui.screen.notifications.NotificationsScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileDetailScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
+import com.gtg.electroshopandroid.ui.screen.order.OrderDetailScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -67,7 +70,9 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(Screen.OrderHistory.route) {
-            OrderHistoryScreen(onBack = { navController.popBackStack() })
+            OrderHistoryScreen(
+                navController = navController,
+                onBack = { navController.popBackStack() })
         }
 
         composable(Screen.Messages.route) {
@@ -75,6 +80,17 @@ fun AppNavHost(navController: NavHostController) {
         }
         composable(Screen.Notifications.route) {
             NotificationsScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(
+            route = "order_detail/{orderId}",
+            arguments = listOf(navArgument("orderId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getInt("orderId")
+            OrderDetailScreen(
+                orderId = orderId,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
