@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.data.model.ProductDto
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -40,6 +43,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.zIndex
 import com.gtg.electroshopandroid.data.model.RatingDto
+import com.gtg.electroshopandroid.data.model.product.ProductCardDto
+import com.gtg.electroshopandroid.data.model.product.RecommendDto
+import com.gtg.electroshopandroid.ui.components.ProductCard
 import com.gtg.electroshopandroid.ui.screen.rating.RatingUiState
 import com.gtg.electroshopandroid.ui.screen.rating.RatingViewModel
 import java.text.NumberFormat
@@ -55,10 +61,13 @@ fun formatPrice(price: Double): String {
 fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
     val viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory)
     val productUiState = viewModel.productUiState
+    val recommendViewModel: RecommendViewModel = viewModel(factory = RecommendViewModel.Factory)
+    val recommendUiState = recommendViewModel.recommendUiState
     var quantity by remember { mutableStateOf(1) }
 
     LaunchedEffect(productId) {
         viewModel.getProductById(productId)
+        recommendViewModel.getRecommendations(productId)
     }
 
     when (productUiState) {
@@ -72,7 +81,6 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
                     .fillMaxSize()
                     .background(Color(0xFFF5F5F5))
             ) {
-                // Nút quay lại ở đầu
                 IconButton(
                     onClick = onBack,
                     modifier = Modifier
@@ -94,7 +102,6 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
                         .fillMaxSize()
                         .padding(top = 64.dp) // Chừa chỗ cho nút
                 ) {
-                    // Ảnh sản phẩm
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -104,7 +111,6 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
                         ProductImageCarousel(product = product)
                     }
 
-                    // Nội dung bo góc trên
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -148,12 +154,25 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
 
                             ProductTabs(product = product)
                             RatingSection(productId = productId)
+
+                            // Thêm phần sản phẩm tương tự khi recommendUiState thành công
+                            when (recommendUiState) {
+                                is RecommendUiState.Success -> {
+                                    RecommendedProductsSection(recommendations = recommendUiState.recommendations)
+                                }
+                                is RecommendUiState.Loading -> {
+                                    Text("Đang tải sản phẩm tương tự...", modifier = Modifier.padding(16.dp))
+                                }
+                                is RecommendUiState.Error -> {
+                                    Text("Không tải được sản phẩm tương tự", modifier = Modifier.padding(16.dp))
+                                }
+                            }
+
                             Spacer(modifier = Modifier.height(80.dp))
                         }
                     }
                 }
 
-                // Bottom bar cố định
                 BottomBar(
                     quantity = quantity,
                     onIncrement = { quantity++ },
@@ -166,6 +185,7 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
             }
         }
     }
+
 }
 
 
@@ -504,6 +524,43 @@ fun RatingItem(rating: RatingDto) {
         }
     }
 }
+@Composable
+fun RecommendedProductsSection(recommendations: List<RecommendDto>) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Sản phẩm tương tự",
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(recommendations) { recommendDto ->
+                val productCardDto = ProductCardDto(
+                    productId = recommendDto.productId,
+                    name = recommendDto.name,
+                    images = recommendDto.productImages.map { it.imageUrl.toAndroidAccessibleUrl() },
+                    originalPrice = recommendDto.originalPrice,
+                    discountedPrice = recommendDto.discountedPrice,
+                    discountType = recommendDto.discountType,
+                    discountValue = recommendDto.discountValue,
+                    averageRating = recommendDto.averageRating
+                )
+                ProductCard(
+                    productCardDto = productCardDto,
+                    isFavorite = false,
+                    onFavoriteClick = { /* TODO */ },
+                    modifier = Modifier.width(180.dp)
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun BottomBar(
     quantity: Int,

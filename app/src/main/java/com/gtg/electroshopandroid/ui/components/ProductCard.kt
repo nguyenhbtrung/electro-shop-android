@@ -49,7 +49,8 @@ import com.gtg.electroshopandroid.ui.theme.onSurfaceLight
 fun ProductCard(
     productCardDto: ProductCardDto,
     isFavorite: Boolean,
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),

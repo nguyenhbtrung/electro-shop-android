@@ -5,14 +5,14 @@ import com.gtg.electroshopandroid.data.network.ProductApiService
 import com.gtg.electroshopandroid.data.network.RecommendApiService
 
 interface RecommendRepository {
-    suspend fun getRecommendById(productId: Int): RecommendDto
+    suspend fun getRecommendById(productId: Int): List<RecommendDto>
 }
 
 class RecommendRepositoryImpl(
     private val recommendApiService: RecommendApiService
 ) : RecommendRepository {
 
-    override suspend fun getRecommendById(productId: Int): RecommendDto {
+    override suspend fun getRecommendById(productId: Int): List<RecommendDto> {
         return recommendApiService.getRecommendById(productId)
     }
 }

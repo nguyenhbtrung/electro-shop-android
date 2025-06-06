@@ -6,5 +6,5 @@ import retrofit2.http.Path
 
 interface RecommendApiService {
     @GET("api/Product/recommend/{productId}")
-    suspend fun getRecommendById(@Path("productId") productId: Int): RecommendDto
+    suspend fun getRecommendById(@Path("productId") productId: Int): List<RecommendDto>
 }
