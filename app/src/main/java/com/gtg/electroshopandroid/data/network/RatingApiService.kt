@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface RatingApiService {
 
-    @GET("api/Ratings/product/{productId}")
+    @GET("api/Rating/product/{productId}")
     suspend fun getRatingsByProductId(
         @Path("productId") productId: Int
     ): List<RatingDto>

@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,9 +29,12 @@ import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.data.model.ProductDto
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.verticalScroll
 import com.gtg.electroshopandroid.data.model.RatingDto
+import com.gtg.electroshopandroid.ui.screen.rating.RatingUiState
+import com.gtg.electroshopandroid.ui.screen.rating.RatingViewModel
 import java.text.NumberFormat
 import java.util.Locale
 fun String.toAndroidAccessibleUrl(): String {
@@ -47,7 +48,7 @@ fun formatPrice(price: Double): String {
 fun ProductScreen(productId: Int) {
     val viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory)
     val productUiState = viewModel.productUiState
-
+    val scrollState = rememberScrollState()
     LaunchedEffect(productId) {
         viewModel.getProductById(productId)
     }
@@ -60,6 +61,7 @@ fun ProductScreen(productId: Int) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(scrollState)
                     .padding(16.dp)
             ) {
                 ProductImageCarousel(product = product)
@@ -93,6 +95,7 @@ fun ProductScreen(productId: Int) {
                     )
                 }
                 ProductTabs(product = product)
+                RatingSection(productId = productId)
             }
         }
     }
@@ -131,6 +134,7 @@ fun ProductImageCarousel(product: ProductDto) {
                         contentScale = ContentScale.Crop
                     )
                 }
+
 
                 // Hiển thị nhãn giảm giá nếu có
                 if (product.discountValue > 0) {
@@ -262,3 +266,119 @@ fun ProductTabs(product: ProductDto) {
         }
     }
 }
+
+@Composable
+fun RatingSection(
+    productId: Int,
+    ratingViewModel: RatingViewModel = viewModel(factory = RatingViewModel.Factory)
+) {
+    var showComments by remember { mutableStateOf(false) }
+
+    // Gọi API ngay khi composable được tạo
+    LaunchedEffect(key1 = productId) {
+        ratingViewModel.getRatingsByProductId(productId)
+    }
+
+    val ratingUiState = ratingViewModel.ratingUiState
+
+    Column(modifier = Modifier.padding(16.dp)) {
+        // Hiển thị tổng điểm trung bình
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Đánh giá sản phẩm:", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFB2EBF2))
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val avg = when (ratingUiState) {
+                        is RatingUiState.Success -> {
+                            val avgScore = ratingUiState.ratings.map { it.ratingScore }.average()
+                            String.format("%.1f", avgScore)
+                        }
+                        else -> "0.0"
+                    }
+                    Text(avg, fontWeight = FontWeight.Bold)
+                    Icon(Icons.Default.Star, contentDescription = "Rating", tint = Color.Yellow)
+                }
+            }
+        }
+
+        // Nút xem thêm
+        Text(
+            text = if (showComments) "Ẩn bớt" else "Xem thêm...",
+            color = Color.Blue,
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .clickable {
+                    showComments = !showComments
+                }
+        )
+
+        // Hiển thị danh sách đánh giá khi "showComments" được bật
+        if (showComments) {
+            when (ratingUiState) {
+                is RatingUiState.Loading -> {
+                    Text("Đang tải đánh giá...", modifier = Modifier.padding(top = 8.dp))
+                }
+
+                is RatingUiState.Error -> {
+                    Text(
+                        text = "Lỗi khi tải đánh giá",
+                        color = Color.Red,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+
+                    ratingViewModel.errorMessage?.let { message ->
+                        Text(
+                            text = message,
+                            color = Color.Red,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+
+                is RatingUiState.Success -> {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ratingUiState.ratings.forEach { rating ->
+                        RatingItem(rating)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+fun RatingItem(rating: RatingDto) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .border(1.dp, Color.Gray, RoundedCornerShape(24.dp))
+            .padding(12.dp)
+    ) {
+        Column {
+            Text(text = rating.userName, fontWeight = FontWeight.Bold)
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                repeat(rating.ratingScore) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFFFC107)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(text = rating.ratingContent)
+        }
+    }
+}
+

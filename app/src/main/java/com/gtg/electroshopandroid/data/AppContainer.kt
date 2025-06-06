@@ -5,6 +5,7 @@ import com.gtg.electroshopandroid.data.network.AuthApiService
 import com.gtg.electroshopandroid.data.repository.AuthRepository
 import com.gtg.electroshopandroid.data.repository.AuthRepositoryImpl
 import com.gtg.electroshopandroid.data.interceptor.AuthInterceptor
+import com.gtg.electroshopandroid.data.network.CategoryApiService
 import com.gtg.electroshopandroid.data.network.ExampleApiService
 import com.gtg.electroshopandroid.data.network.ProductApiService
 import com.gtg.electroshopandroid.data.network.ProductHistoryApiService
@@ -12,6 +13,7 @@ import com.gtg.electroshopandroid.data.repository.ExampleRepository
 import com.gtg.electroshopandroid.data.repository.ExampleRepositoryImpl
 import com.gtg.electroshopandroid.data.network.OrderHistoryApiService
 import com.gtg.electroshopandroid.data.network.RatingApiService
+import com.gtg.electroshopandroid.data.repository.CategoryRepository
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepository
@@ -35,6 +37,7 @@ interface AppContainer {
     val authRepository: AuthRepository
     val tokenPreferences: TokenPreferences
     val ratingRepository: RatingRepository
+    val categoryRepository: CategoryRepository
 }
 
 class DefaultAppContainer(
@@ -93,6 +96,13 @@ class DefaultAppContainer(
 
     override val ratingRepository: RatingRepository by lazy {
         RatingRepository(ratingApiService)
+    }
+    private val categoryApiService: CategoryApiService by lazy {
+        retrofit.create(CategoryApiService::class.java)
+    }
+
+    override val categoryRepository: CategoryRepository by lazy {
+        CategoryRepository(categoryApiService)
     }
     private val orderHistoryApiService: OrderHistoryApiService by lazy {
         retrofit.create(OrderHistoryApiService::class.java)

@@ -41,14 +41,6 @@ data class ProductImageDto(
     val imageUrl: String
 )
 
-@Serializable
-data class CategoryDto(
-    @SerialName("categoryId")
-    val categoryId: Int,
-    @SerialName("name")
-    val name: String
-)
-
 
 @Serializable
 data class BrandDto(

@@ -1,4 +1,4 @@
-package com.gtg.electroshopandroid.ui.screen.rating
+package com.gtg.electroshopandroid.ui.screen.category
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.gtg.electroshopandroid.data.model.RatingDto
-import com.gtg.electroshopandroid.data.repository.RatingRepository
+
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -15,35 +14,39 @@ import com.gtg.electroshopandroid.ElectroShopApplication
 import retrofit2.HttpException
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import com.gtg.electroshopandroid.data.model.CategoryDto
+import com.gtg.electroshopandroid.data.repository.CategoryRepository
 
-sealed interface RatingUiState {
-    object Loading : RatingUiState
-    data class Success(val ratings: List<RatingDto>) : RatingUiState
-    object Error : RatingUiState
+
+
+sealed interface CategoryUiState {
+    object Loading : CategoryUiState
+    data class Success(val category: List<CategoryDto>) : CategoryUiState
+    object Error : CategoryUiState
 }
-class RatingViewModel(
-    private val ratingRepository: RatingRepository
+class CategoryViewModel(
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
-    var ratingUiState: RatingUiState by mutableStateOf(RatingUiState.Loading)
+    var categoryUiState: CategoryUiState by mutableStateOf(CategoryUiState.Loading)
         private set
     var errorMessage: String? by mutableStateOf(null)
         private set
-    fun getRatingsByProductId(productId: Int) {
+    fun getCategoryByProductId(categoryId: Int) {
         viewModelScope.launch {
-            ratingUiState = RatingUiState.Loading
-            ratingUiState = try {
-                val result = ratingRepository.getRatingsByProductId(productId)
-                RatingUiState.Success(result)
+            categoryUiState = CategoryUiState.Loading
+            categoryUiState = try {
+                val result = categoryRepository.getCategory(categoryId)
+                CategoryUiState.Success(result)
             } catch (e: IOException) {
                 errorMessage = "Network error: ${e.message}"
-                RatingUiState.Error
+                CategoryUiState.Error
             } catch (e: HttpException) {
                 errorMessage = "HTTP error ${e.code()}: ${e.message()}"
-                RatingUiState.Error
+                CategoryUiState.Error
             } catch (e: Exception) {
                 errorMessage = "Unexpected error: ${e.message}"
-                RatingUiState.Error
+                CategoryUiState.Error
             }
         }
     }
@@ -52,8 +55,8 @@ class RatingViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ElectroShopApplication)
-                val ratingRepository = application.container.ratingRepository
-                RatingViewModel(ratingRepository = ratingRepository)
+                val categoryRepository = application.container.categoryRepository
+                CategoryViewModel(categoryRepository = categoryRepository)
             }
         }
     }

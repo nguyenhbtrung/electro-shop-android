@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.gtg.electroshopandroid.preferences.TokenPreferences
 import com.gtg.electroshopandroid.ui.example.ExampleScreen
 import com.gtg.electroshopandroid.ui.screen.main.MainScreen
+import com.gtg.electroshopandroid.ui.screen.product.ProductScreen
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -38,7 +39,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ElectroShopAndroidTheme {
-                App()
+                //App()
+                ProductScreen(12)
             }
         }
 //        Test authentication api
