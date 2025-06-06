@@ -81,6 +81,7 @@ class DefaultAppContainer(
 
     override val authRepository: AuthRepository by lazy {
         AuthRepositoryImpl(authApiService)
+    }
     private val productApiService: ProductApiService by lazy {
         retrofit.create(ProductApiService::class.java)
     }
