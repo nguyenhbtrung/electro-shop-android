@@ -1,6 +1,9 @@
 package com.gtg.electroshopandroid.data
 
 import android.content.Context
+import com.gtg.electroshopandroid.data.network.AuthApiService
+import com.gtg.electroshopandroid.data.repository.AuthRepository
+import com.gtg.electroshopandroid.data.repository.AuthRepositoryImpl
 import com.gtg.electroshopandroid.data.interceptor.AuthInterceptor
 import com.gtg.electroshopandroid.data.network.ExampleApiService
 import com.gtg.electroshopandroid.data.network.ProductApiService
@@ -27,6 +30,8 @@ interface AppContainer {
     val productHistoryRepository: ProductHistoryRepository
     val productRepository :ProductRepository
     val orderHistoryRepository: OrderHistoryRepository
+    val authRepository: AuthRepository
+    val tokenPreferences: TokenPreferences
 }
 
 class DefaultAppContainer(
@@ -34,7 +39,7 @@ class DefaultAppContainer(
 ) : AppContainer {
     private val baseUrl = "http://10.0.2.2:5030/"
 
-    private val tokenPreferences by lazy {
+    override val tokenPreferences by lazy {
         TokenPreferences(context)
     }
 
@@ -88,4 +93,11 @@ class DefaultAppContainer(
         OrderHistoryRepositoryImpl(orderHistoryApiService)
     }
 
+    private val authApiService: AuthApiService by lazy {
+        retrofit.create(AuthApiService::class.java)
+    }
+
+    override val authRepository: AuthRepository by lazy {
+        AuthRepositoryImpl(authApiService)
+    }
 }
