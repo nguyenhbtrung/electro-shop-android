@@ -24,7 +24,7 @@ interface AppContainer {
 class DefaultAppContainer(
     private val context: Context
 ) : AppContainer {
-    private val baseUrl = "https://a547-113-190-169-230.ngrok-free.app/"
+    private val baseUrl = "http://10.0.2.2:5030/"
 
     private val tokenPreferences by lazy {
         TokenPreferences(context)
