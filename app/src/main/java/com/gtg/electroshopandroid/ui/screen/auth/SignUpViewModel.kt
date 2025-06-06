@@ -4,7 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.model.AuthResponse
 import com.gtg.electroshopandroid.data.model.RegisterRequest
 import com.gtg.electroshopandroid.data.repository.AuthRepository
@@ -60,7 +64,6 @@ class SignUpViewModel(
         registerError.value = null
         viewModelScope.launch {
             try {
-
                 val response: AuthResponse = authRepository.register(
                     RegisterRequest(
                         userName = userName.value,
@@ -76,11 +79,13 @@ class SignUpViewModel(
             }
         }
     }
-}
-class SignUpViewModelFactory(
-    private val authRepository: AuthRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SignUpViewModel(authRepository) as T
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as ElectroShopApplication)
+                val authRepository = application.container.authRepository
+                SignUpViewModel(authRepository = authRepository)
+            }
+        }
     }
 }

@@ -25,8 +25,11 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SupportAgent
+import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -134,6 +137,7 @@ fun ProfileScreen(navController: NavHostController) {
         Triple("Đơn hàng của bạn", Icons.Default.AddShoppingCart, Screen.OrderHistory.route),
         Triple("Lịch sử duyệt sản phẩm", Icons.Default.History, Screen.BrowsingHistory.route),
         Triple("Cài đặt", Icons.Default.Settings, Screen.Settings.route),
+        Triple("Lịch sử hoàn trả", Icons.Default.Replay, Screen.ReturnHistory.route)
         Triple("Hỗ trợ khách hàng", Icons.Default.SupportAgent, Screen.Support.route),
         Triple("Thông báo", Icons.Default.Notifications, Screen.Notifications.route)
     )

@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val authRepository: AuthRepository,
     private val tokenPreferences: TokenPreferences
-
 ) : ViewModel() {
     var userName = mutableStateOf("")
         private set

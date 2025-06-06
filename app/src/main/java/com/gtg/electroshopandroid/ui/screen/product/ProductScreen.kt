@@ -31,6 +31,7 @@ import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.data.model.ProductDto
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.gtg.electroshopandroid.data.model.RatingDto
 import java.text.NumberFormat
@@ -261,5 +262,3 @@ fun ProductTabs(product: ProductDto) {
         }
     }
 }
-
-
