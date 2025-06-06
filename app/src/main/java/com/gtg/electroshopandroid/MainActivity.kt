@@ -39,8 +39,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ElectroShopAndroidTheme {
-                //App()
-                ProductScreen(12)
+                App()
             }
         }
 
