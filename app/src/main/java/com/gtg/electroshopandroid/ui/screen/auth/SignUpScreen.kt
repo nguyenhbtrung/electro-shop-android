@@ -1,13 +1,10 @@
 package com.gtg.electroshopandroid.ui.screen.auth
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,30 +33,32 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gtg.electroshopandroid.R
+import com.gtg.electroshopandroid.ElectroShopApplication
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
-    viewModel: SignUpViewModel = viewModel(),
     onBackToLogin: () -> Unit,
     onSignUpSuccess: () -> Unit
 ) {
+    val application = LocalContext.current.applicationContext as ElectroShopApplication
+    val factory = SignUpViewModelFactory(application.container.authRepository)
+    val viewModel: SignUpViewModel = viewModel(factory = factory)
+
     val userName by viewModel.userName
     val password by viewModel.password
+    val confirmPassword by viewModel.confirmPassword
+    val email by viewModel.email
     val passwordVisible by viewModel.passwordVisible
-    val signUpSuccess by viewModel.signUpSuccess
+    val signUpSuccess by viewModel.registerSuccess
 
 
     LaunchedEffect(signUpSuccess) {
@@ -140,8 +138,8 @@ fun SignUpScreen(
                 Text("Email:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
                 OutlinedTextField(
-                    value = userName,
-                    onValueChange = viewModel::onUserNameChanged,
+                    value = email,
+                    onValueChange = viewModel::onEmailChanged,
                     placeholder = { Text("Điền email của bạn...") },
                     singleLine = true,
                     shape = RoundedCornerShape(10.dp),
@@ -199,8 +197,8 @@ fun SignUpScreen(
                 Text("Nhập lại mật khẩu:", fontSize = 18.sp, modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.fillMaxHeight(0.0078f))
                 OutlinedTextField(
-                    value = password,
-                    onValueChange = viewModel::onPasswordChanged,
+                    value = confirmPassword,
+                    onValueChange = viewModel::onConfirmPasswordChanged,
                     placeholder = { Text("Nhập lại mật khẩu của bạn...") },
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -222,7 +220,7 @@ fun SignUpScreen(
                 Spacer(modifier = Modifier.fillMaxHeight(0.15f))
 
                 Button(
-                    onClick = viewModel::onSignUpClick,
+                    onClick = viewModel::onRegisterClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),

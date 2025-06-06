@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -46,14 +47,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.R
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
     onLoginSuccess: () -> Unit,
     onSignupClick: () -> Unit
 ) {
+    // Lấy application và container
+    val application = LocalContext.current.applicationContext as ElectroShopApplication
+    val authRepo = application.container.authRepository
+    val tokenPrefs = application.container.tokenPreferences
+
+    // Tạo ViewModel thông qua factory, truyền authRepo vào
+    val viewModel: LoginViewModel = viewModel(
+        factory = LoginViewModel.LoginViewModelFactory(authRepo, tokenPrefs)
+    )
     val userName by viewModel.userName
     val password by viewModel.password
     val passwordVisible by viewModel.passwordVisible
