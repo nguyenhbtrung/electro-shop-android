@@ -42,6 +42,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import com.gtg.electroshopandroid.data.model.RatingDto
 import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 import com.gtg.electroshopandroid.data.model.product.RecommendDto
@@ -49,6 +51,7 @@ import com.gtg.electroshopandroid.ui.components.ProductCard
 import com.gtg.electroshopandroid.ui.screen.rating.RatingUiState
 import com.gtg.electroshopandroid.ui.screen.rating.RatingViewModel
 import com.gtg.electroshopandroid.convertBaseUrl
+import kotlinx.coroutines.coroutineScope
 import java.text.NumberFormat
 import java.util.Locale
 fun formatPrice(price: Double): String {
@@ -56,7 +59,7 @@ fun formatPrice(price: Double): String {
     return formatter.format(price)
 }
 @Composable
-fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
+fun ProductScreen(productId: Int, onBack: () -> Unit = {},navController: NavController) {
     val viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory)
     val productUiState = viewModel.productUiState
     val recommendViewModel: RecommendViewModel = viewModel(factory = RecommendViewModel.Factory)
@@ -64,9 +67,16 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
     var quantity by remember { mutableStateOf(1) }
 
     LaunchedEffect(productId) {
-        viewModel.getProductById(productId)
-        recommendViewModel.getRecommendations(productId)
+        coroutineScope {
+            launch {1
+                viewModel.getProductById(productId)
+            }
+            launch {
+                recommendViewModel.getRecommendations(productId)
+            }
+        }
     }
+
 
     when (productUiState) {
         is ProductUiState.Loading -> Text("Đang tải sản phẩm...")
@@ -156,7 +166,8 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
                             // Thêm phần sản phẩm tương tự khi recommendUiState thành công
                             when (recommendUiState) {
                                 is RecommendUiState.Success -> {
-                                    RecommendedProductsSection(recommendations = recommendUiState.recommendations)
+                                    RecommendedProductsSection(recommendations = recommendUiState.recommendations, navController= navController)
+
                                 }
                                 is RecommendUiState.Loading -> {
                                     Text("Đang tải sản phẩm tương tự...", modifier = Modifier.padding(16.dp))
@@ -223,8 +234,6 @@ fun ProductImageCarousel(product: ProductDto) {
                     )
                 }
 
-
-                // Hiển thị nhãn giảm giá nếu có
                 if (product.discountValue > 0) {
                     val isPercentage = product.discountType.equals("Percentage", ignoreCase = true)
                     val discountText = if (isPercentage) "-${product.discountValue.toInt()}%" else "-${product.discountValue.toInt()}₫"
@@ -523,7 +532,7 @@ fun RatingItem(rating: RatingDto) {
     }
 }
 @Composable
-fun RecommendedProductsSection(recommendations: List<RecommendDto>) {
+fun RecommendedProductsSection(recommendations: List<RecommendDto>,navController: NavController) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Sản phẩm tương tự",
@@ -553,7 +562,7 @@ fun RecommendedProductsSection(recommendations: List<RecommendDto>) {
                     isFavorite = false,
                     onFavoriteClick = { /* TODO */ },
                     modifier = Modifier.width(180.dp),
-                    onProductClick = {}
+                    onProductClick = {navController.navigate("products/${productCardDto.productId}")}
                 )
             }
         }
