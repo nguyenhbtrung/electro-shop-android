@@ -23,6 +23,8 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.gtg.electroshopandroid.R
+import com.gtg.electroshopandroid.convertBaseUrl
+import com.gtg.electroshopandroid.data.model.BannerDto
 import kotlinx.coroutines.delay
 
 // Model cho dữ liệu banner
@@ -33,7 +35,7 @@ data class BannerItem(
 
 @Composable
 fun BannerCarousel(
-    banners: List<BannerItem>,
+    banners: List<BannerDto>,
     modifier: Modifier = Modifier,
     autoScrollDuration: Long = 3000L, // Thời gian tự động cuộn (ms)
     indicatorColor: Color = Color.Gray,
@@ -77,11 +79,11 @@ fun BannerCarousel(
             ) { page ->
                 val banner = banners[page]
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current).data(banner.imageUrl)
+                    model = ImageRequest.Builder(context = LocalContext.current).data(convertBaseUrl(banner.imageUrl))
                         .crossfade(true).build(),
                     error = painterResource(R.drawable.banner_1),
                     placeholder = painterResource(R.drawable.banner_1),
-                    contentDescription = banner.contentDescription,
+                    contentDescription = banner.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -113,28 +115,28 @@ fun BannerCarousel(
     }
 }
 
-// Preview cho BannerCarousel
-@Composable
-@Preview(showBackground = true)
-fun BannerCarouselPreview() {
-    val sampleBanners = listOf(
-        BannerItem("https://picsum.photos/id/237/200/300", "Banner 1"),
-        BannerItem("https://picsum.photos/id/238/200/300", "Banner 2"),
-        BannerItem("https://picsum.photos/id/239/200/300", "Banner 3")
-    )
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(16.dp))
-        BannerCarousel(
-            banners = sampleBanners,
-            modifier = Modifier.padding(horizontal = 16.dp),
-            autoScrollDuration = 3000L
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        BannerCarousel(
-            banners = sampleBanners.take(1), // Chỉ 1 banner, không có indicator
-            modifier = Modifier.padding(horizontal = 16.dp),
-            autoScrollDuration = 0L // Tắt tự động cuộn
-        )
-    }
-}
+//// Preview cho BannerCarousel
+//@Composable
+//@Preview(showBackground = true)
+//fun BannerCarouselPreview() {
+//    val sampleBanners = listOf(
+//        BannerDto("https://picsum.photos/id/237/200/300", "Banner 1"),
+//        BannerDto("https://picsum.photos/id/238/200/300", "Banner 2"),
+//        BannerDto("https://picsum.photos/id/239/200/300", "Banner 3")
+//    )
+//
+//    Column(modifier = Modifier.fillMaxSize()) {
+//        Spacer(modifier = Modifier.height(16.dp))
+//        BannerCarousel(
+//            banners = sampleBanners,
+//            modifier = Modifier.padding(horizontal = 16.dp),
+//            autoScrollDuration = 3000L
+//        )
+//        Spacer(modifier = Modifier.height(16.dp))
+//        BannerCarousel(
+//            banners = sampleBanners.take(1), // Chỉ 1 banner, không có indicator
+//            modifier = Modifier.padding(horizontal = 16.dp),
+//            autoScrollDuration = 0L // Tắt tự động cuộn
+//        )
+//    }
+//}

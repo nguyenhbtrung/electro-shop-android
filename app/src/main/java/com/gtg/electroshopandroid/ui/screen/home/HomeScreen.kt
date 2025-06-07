@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gtg.electroshopandroid.R
+import com.gtg.electroshopandroid.data.model.BannerDto
 import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 import com.gtg.electroshopandroid.ui.components.BannerCarousel
 import com.gtg.electroshopandroid.ui.components.BannerItem
@@ -34,11 +35,6 @@ import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    val sampleBanners = listOf(
-        BannerItem("https://picsum.photos/id/237/200/300", "Banner 1"),
-        BannerItem("https://picsum.photos/id/238/200/300", "Banner 2"),
-        BannerItem("https://picsum.photos/id/239/200/300", "Banner 3")
-    )
 
     val productList = List(10) { index ->
         ProductCardDto(
@@ -56,7 +52,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     }
     val scrollState = rememberScrollState()
 
-    val homeViewModel: HomeViewModel = viewModel()
+    val homeViewModel: HomeViewModel =
+        viewModel(factory = HomeViewModel.Factory)
+
     val searchText = homeViewModel.searchText
 
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
@@ -88,7 +86,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.height(32.dp))
             BannerCarousel(
-                banners = sampleBanners,
+                banners = homeViewModel.uiState.banners,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 autoScrollDuration = 3000L,
                 indicatorColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -123,5 +121,6 @@ fun HomeScreenPreviewDarkTheme() {
         HomeScreen()
     }
 }
+
 
 
