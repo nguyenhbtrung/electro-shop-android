@@ -221,7 +221,7 @@ fun ProfileScreen(navController: NavHostController) {
                                 scope.launch {
                                     tokenPrefs.clearAccessToken()
                                     // Chuyển hướng về màn hình đăng nhập (bạn cần đặt lại tên route đúng nếu khác)
-                                    navController.navigate("login_screen") {
+                                    navController.navigate(Screen.Login.route) {
                                         popUpTo(0) { inclusive = true }
                                     }
                                 }

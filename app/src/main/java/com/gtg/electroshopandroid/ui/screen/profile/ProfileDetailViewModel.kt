@@ -3,13 +3,18 @@ package com.gtg.electroshopandroid.ui.screen.profile
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.model.EditProfileRequest
 import com.gtg.electroshopandroid.data.repository.ProfileRepository
+import com.gtg.electroshopandroid.ui.screen.product.ProductViewModel
 import kotlinx.coroutines.launch
 
 class ProfileDetailViewModel(
-    private val repository: ProfileRepository
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
     var userName = mutableStateOf("")
         private set
@@ -44,7 +49,7 @@ class ProfileDetailViewModel(
     fun loadProfile() {
         viewModelScope.launch {
             try {
-                val profile = repository.getProfile()
+                val profile = profileRepository.getProfile()
                 userName.value = profile.userName
                 email.value = profile.email
                 fullName.value = profile.fullName
@@ -66,7 +71,7 @@ class ProfileDetailViewModel(
                     address = address.value,
                     avatarImg = avatarImg.value
                 )
-                repository.updateUser(request)
+                profileRepository.updateUser(request)
                 // Gọi lại getProfile sau khi update
                 loadProfile()
                 onSuccess()
@@ -75,15 +80,13 @@ class ProfileDetailViewModel(
             }
         }
     }
-    class ProfileDetailViewModelFactory(
-        private val repository: ProfileRepository
-    ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ProfileDetailViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return ProfileDetailViewModel(repository) as T
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as ElectroShopApplication)
+                val profileRepository = application.container.profileRepository
+                ProfileDetailViewModel(profileRepository = profileRepository)
             }
-            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 }

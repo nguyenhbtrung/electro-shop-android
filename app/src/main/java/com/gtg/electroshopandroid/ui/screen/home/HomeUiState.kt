@@ -18,9 +18,9 @@ sealed interface BannerUiState {
 
 fun initLoadingBanners() : List<BannerDto> {
     return listOf(
-        BannerDto(1, "", "", ""),
-        BannerDto(2, "", "", ""),
-        BannerDto(3, "", "", "")
+        BannerDto(1, "", ""),
+        BannerDto(2, "", ""),
+        BannerDto(3, "", "")
     )
 }
 
@@ -28,6 +28,4 @@ fun initLoadingProducts() : List<ProductCardDto> {
     return List(10){ index ->
         ProductCardDto(index + 1, "", listOf(""), 0.0, 0.0, "", 0.0, 0.0)
     }
-
-
 }

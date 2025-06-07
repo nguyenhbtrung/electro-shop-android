@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gtg.electroshopandroid.R
+import com.gtg.electroshopandroid.data.repository.ProfileRepository
+import com.gtg.electroshopandroid.ui.screen.product.ProductViewModel
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,9 +51,8 @@ import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 fun ProfileDetailScreen(
     onBackToProfile: () -> Unit,
     onChangeSuccess: () -> Unit,
-    viewModel: ProfileDetailViewModel
 ) {
-
+    val viewModel: ProfileDetailViewModel = viewModel(factory = ProfileDetailViewModel.Factory)
     LaunchedEffect(Unit) {
         viewModel.loadProfile()
     }
