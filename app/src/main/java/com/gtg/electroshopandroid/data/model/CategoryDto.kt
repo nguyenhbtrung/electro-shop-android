@@ -14,3 +14,14 @@ data class CategoryDto(
     @SerialName("description")
     val description: String? = null,
     )
+@Serializable
+data class CategoryProductDto(
+    @SerialName("productId")
+    val productId: Int,
+
+    @SerialName("name")
+    val name: String,
+
+    @SerialName("description")
+    val description: String? = null,
+)

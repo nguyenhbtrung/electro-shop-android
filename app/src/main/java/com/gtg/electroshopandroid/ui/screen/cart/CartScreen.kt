@@ -35,7 +35,7 @@ import com.gtg.electroshopandroid.data.model.CartDto
 import com.gtg.electroshopandroid.ui.screen.payment.CheckoutActivity
 import com.gtg.electroshopandroid.ui.screen.product.ProductUiState
 import com.gtg.electroshopandroid.ui.screen.product.ProductViewModel
-import com.gtg.electroshopandroid.ui.screen.product.toAndroidAccessibleUrl
+//import com.gtg.electroshopandroid.ui.screen.product.toAndroidAccessibleUrl
 import java.text.NumberFormat
 import java.util.Locale
 
