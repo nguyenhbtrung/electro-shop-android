@@ -48,11 +48,9 @@ import com.gtg.electroshopandroid.data.model.product.RecommendDto
 import com.gtg.electroshopandroid.ui.components.ProductCard
 import com.gtg.electroshopandroid.ui.screen.rating.RatingUiState
 import com.gtg.electroshopandroid.ui.screen.rating.RatingViewModel
+import com.gtg.electroshopandroid.convertBaseUrl
 import java.text.NumberFormat
 import java.util.Locale
-fun String.toAndroidAccessibleUrl(): String {
-    return this.replace(Regex("https://localhost(:\\d+)?"), "http://10.0.2.2:5030")
-}
 fun formatPrice(price: Double): String {
     val formatter = NumberFormat.getInstance(Locale("vi", "VN"))
     return formatter.format(price)
@@ -193,7 +191,7 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {}) {
 
 @Composable
 fun ProductImageCarousel(product: ProductDto) {
-    val imageUrls = product.productImages.map { it.imageUrl.toAndroidAccessibleUrl() }
+    val imageUrls = product.productImages.map { convertBaseUrl(it.imageUrl) }
     val pagerState = rememberPagerState(initialPage = 0) {
         imageUrls.size
     }
@@ -543,7 +541,7 @@ fun RecommendedProductsSection(recommendations: List<RecommendDto>) {
                 val productCardDto = ProductCardDto(
                     productId = recommendDto.productId,
                     name = recommendDto.name,
-                    images = recommendDto.productImages.map { it.imageUrl.toAndroidAccessibleUrl() },
+                    images = recommendDto.productImages.map { convertBaseUrl(it.imageUrl) },
                     originalPrice = recommendDto.originalPrice,
                     discountedPrice = recommendDto.discountedPrice,
                     discountType = recommendDto.discountType,
