@@ -63,7 +63,8 @@ fun AppNavHost(navController: NavHostController) {
             val productId = backStackEntry.arguments?.getInt("id") ?: return@composable
             ProductScreen(
                 productId = productId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                navController = navController
             )
         }
 
