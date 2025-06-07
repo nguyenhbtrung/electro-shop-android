@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,8 +49,12 @@ import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 fun ProfileDetailScreen(
     onBackToProfile: () -> Unit,
     onChangeSuccess: () -> Unit,
+    viewModel: ProfileDetailViewModel
 ) {
-    val viewModel: ProfileDetailViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadProfile()
+    }
     val userName by viewModel.userName
     val email by viewModel.email
     val fullName by viewModel.fullName
@@ -169,7 +174,7 @@ fun ProfileDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
-                    onClick = viewModel::onChangeClick,
+                    onClick = { viewModel.onChangeClick(onChangeSuccess) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp),
@@ -197,7 +202,6 @@ fun PreviewSignUpScreen() {
         contentAlignment = Alignment.Center,
     ) {
         ElectroShopAndroidTheme {
-            ProfileDetailScreen(onChangeSuccess = {}, onBackToProfile = {})
         }
     }
 }

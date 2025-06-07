@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class ProfileDetail(
     val userName: String,
     val fullName: String,
+    val email: String,
     val address: String,
     val avatarImg: String,
     val phoneNumber: String

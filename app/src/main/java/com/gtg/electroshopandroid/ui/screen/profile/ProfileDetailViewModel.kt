@@ -2,8 +2,15 @@ package com.gtg.electroshopandroid.ui.screen.profile
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.gtg.electroshopandroid.data.model.EditProfileRequest
+import com.gtg.electroshopandroid.data.repository.ProfileRepository
+import kotlinx.coroutines.launch
 
-class ProfileDetailViewModel() : ViewModel() {
+class ProfileDetailViewModel(
+    private val repository: ProfileRepository
+) : ViewModel() {
     var userName = mutableStateOf("")
         private set
 
@@ -34,5 +41,50 @@ class ProfileDetailViewModel() : ViewModel() {
         address.value = newValue
     }
 
-    fun onChangeClick(){}
+    fun loadProfile() {
+        viewModelScope.launch {
+            try {
+                val profile = repository.getProfile()
+                userName.value = profile.userName
+                email.value = profile.email
+                fullName.value = profile.fullName
+                phoneNumber.value = profile.phoneNumber
+                address.value = profile.address
+                avatarImg.value = profile.avatarImg
+            } catch (e: Exception) {
+                // Xử lý lỗi nếu cần
+            }
+        }
+    }
+
+    fun onChangeClick(onSuccess: () -> Unit = {}) {
+        viewModelScope.launch {
+            try {
+                val request = EditProfileRequest(
+                    fullName = fullName.value,
+                    phoneNumber = phoneNumber.value,
+                    address = address.value,
+                    avatarImg = avatarImg.value
+                )
+                repository.updateUser(request)
+                // Gọi lại getProfile sau khi update
+                loadProfile()
+                onSuccess()
+            } catch (e: Exception) {
+                // Xử lý lỗi nếu cần
+            }
+        }
+    }
+    class ProfileDetailViewModelFactory(
+        private val repository: ProfileRepository
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(ProfileDetailViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return ProfileDetailViewModel(repository) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+    }
 }
+

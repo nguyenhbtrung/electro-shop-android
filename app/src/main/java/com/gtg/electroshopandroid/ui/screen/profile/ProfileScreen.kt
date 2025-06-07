@@ -37,11 +37,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +54,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.gtg.electroshopandroid.R
 import com.gtg.electroshopandroid.data.model.Screen
+import com.gtg.electroshopandroid.preferences.TokenPreferences
+import kotlinx.coroutines.launch
 
 @Composable
 fun CategoryItem(
@@ -148,6 +153,11 @@ fun ProfileScreen(navController: NavHostController) {
         "Xóa tài khoản" to Icons.Default.Delete
     )
 
+    val context = LocalContext.current
+    val tokenPrefs = remember { TokenPreferences(context) }
+    val scope = rememberCoroutineScope()
+
+
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             modifier = Modifier
@@ -207,7 +217,15 @@ fun ProfileScreen(navController: NavHostController) {
                         title = title,
                         leadingIcon = icon,
                         onClick = {
-                            //viewModel.onCategoryClicked(title)
+                            if (title == "Đăng xuất") {
+                                scope.launch {
+                                    tokenPrefs.clearAccessToken()
+                                    // Chuyển hướng về màn hình đăng nhập (bạn cần đặt lại tên route đúng nếu khác)
+                                    navController.navigate("login_screen") {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                }
+                            }
                         },
                         modifier = Modifier
                             .padding(top = topPadding, bottom = bottomPadding)
