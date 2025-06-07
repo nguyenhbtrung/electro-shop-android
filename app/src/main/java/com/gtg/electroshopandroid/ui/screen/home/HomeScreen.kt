@@ -95,12 +95,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             Spacer(Modifier.height(16.dp))
             HorizontalScrollingProductList(
                 title = stringResource(R.string.discount),
-                productCardDtoList = productList
+                productCardDtoList = homeViewModel.uiState.discountedProducts
             )
             Spacer(Modifier.height(16.dp))
             HorizontalScrollingProductList(
                 title = stringResource(R.string.best_seller),
-                productCardDtoList = productList
+                productCardDtoList = homeViewModel.uiState.bestSellerProducts
             )
         }
     }

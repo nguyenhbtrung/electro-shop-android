@@ -45,8 +45,36 @@ class HomeViewModel(
         }
     }
 
+    fun LoadDiscountedProducts() {
+        viewModelScope.launch {
+            uiState = uiState.copy(discountedProducts = initLoadingProducts())
+            val products = try {
+                productRepository.getDiscountedProducts()
+            } catch (e: Exception) {
+                uiState.discountedProducts
+            }
+
+            uiState = uiState.copy(discountedProducts = products)
+        }
+    }
+
+    fun LoadBestSellerProducts() {
+        viewModelScope.launch {
+            uiState = uiState.copy(bestSellerProducts = initLoadingProducts())
+            val products = try {
+                productRepository.getBestSellerProducts()
+            } catch (e: Exception) {
+                uiState.bestSellerProducts
+            }
+
+            uiState = uiState.copy(bestSellerProducts = products)
+        }
+    }
+
     init {
         LoadBanner()
+        LoadDiscountedProducts()
+        LoadBestSellerProducts()
     }
 
 

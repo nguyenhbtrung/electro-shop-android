@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gtg.electroshopandroid.R
+import com.gtg.electroshopandroid.convertBaseUrl
 import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 import com.gtg.electroshopandroid.formatCurrency
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
@@ -58,7 +59,7 @@ fun ProductCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        modifier = Modifier
+        modifier = modifier
             .width(200.dp)
             .padding(8.dp)
     ) {
@@ -66,7 +67,7 @@ fun ProductCard(
             Column(modifier = Modifier.fillMaxWidth()) {
                 // Product Image
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current).data(productCardDto.images[0])
+                    model = ImageRequest.Builder(context = LocalContext.current).data(convertBaseUrl(productCardDto.images[0]))
                         .crossfade(true).build(),
                     error = painterResource(R.drawable.ic_broken_image),
                     placeholder = painterResource(R.drawable.loading_img),
