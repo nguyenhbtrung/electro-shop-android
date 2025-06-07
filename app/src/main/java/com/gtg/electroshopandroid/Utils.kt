@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid
 
+import com.gtg.electroshopandroid.data.EnvVariable
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -10,8 +11,8 @@ fun formatCurrency(amount: Double): String {
 
 fun convertBaseUrl(
     url: String,
-    oldHost: String = "https://localhost:7169",
-    newHost: String = "http://10.0.2.2:5030"
+    oldHost: String = EnvVariable.OLD_HOST_BACKEND,
+    newHost: String = EnvVariable.BASE_URL
 ) : String {
     return if (url.contains(oldHost)) {
         url.replace(oldHost, newHost)

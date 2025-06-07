@@ -38,6 +38,12 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
+// Biến môi trường tạm thời sửa lại sau
+object EnvVariable {
+    const val OLD_HOST_BACKEND = "https://localhost:7169/"
+    const val BASE_URL = "http://10.0.2.2:5030/"
+}
+
 interface AppContainer {
     val exampleRepository: ExampleRepository
     val productHistoryRepository: ProductHistoryRepository
@@ -55,7 +61,6 @@ interface AppContainer {
 class DefaultAppContainer(
     private val context: Context
 ) : AppContainer {
-    private val baseUrl = "http://10.0.2.2:5030/"
     override val tokenPreferences by lazy {
         TokenPreferences(context)
     }
@@ -75,7 +80,7 @@ class DefaultAppContainer(
         ignoreUnknownKeys = true
     }
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
+        .baseUrl(EnvVariable.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
