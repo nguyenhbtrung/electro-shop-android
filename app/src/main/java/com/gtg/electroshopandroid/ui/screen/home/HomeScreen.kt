@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -16,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +33,7 @@ import com.gtg.electroshopandroid.ui.components.HorizontalScrollingProductList
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(modifier: Modifier = Modifier) {
     val sampleBanners = listOf(
         BannerItem("https://picsum.photos/id/237/200/300", "Banner 1"),
         BannerItem("https://picsum.photos/id/238/200/300", "Banner 2"),
@@ -53,13 +54,17 @@ fun HomeScreen() {
             averageRating = 4.0
         )
     }
-
+    val scrollState = rememberScrollState()
 
     val homeViewModel: HomeViewModel = viewModel()
     val searchText = homeViewModel.searchText
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        Column {
+    Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+        ) {
             OutlinedTextField(
                 value = searchText,
                 onValueChange = homeViewModel::onSearchTextChanged,
@@ -89,9 +94,14 @@ fun HomeScreen() {
                 indicatorColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 selectedIndicatorColor = MaterialTheme.colorScheme.primary
             )
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(16.dp))
             HorizontalScrollingProductList(
-                title = "Khuyến mãi",
+                title = stringResource(R.string.discount),
+                productCardDtoList = productList
+            )
+            Spacer(Modifier.height(16.dp))
+            HorizontalScrollingProductList(
+                title = stringResource(R.string.best_seller),
                 productCardDtoList = productList
             )
         }
@@ -106,7 +116,7 @@ fun HomeScreenPreviewLightTheme() {
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun HomeScreenPreviewDarkTheme() {
     ElectroShopAndroidTheme(darkTheme = true) {
