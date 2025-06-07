@@ -1,4 +1,5 @@
 package com.gtg.electroshopandroid.ui.screen.cart
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.R // Thay thế bằng package của bạn, ví dụ: com.yourcompany.yourapp.R
 import com.gtg.electroshopandroid.data.model.CartDto
+import com.gtg.electroshopandroid.ui.screen.payment.CheckoutActivity
 import com.gtg.electroshopandroid.ui.screen.product.ProductUiState
 import com.gtg.electroshopandroid.ui.screen.product.ProductViewModel
 import com.gtg.electroshopandroid.ui.screen.product.toAndroidAccessibleUrl
@@ -76,10 +79,14 @@ fun CartScreen() {
 
             Column(
                 modifier = Modifier.fillMaxSize().background(Color(0xFFE0E0E0))
+
             ) {
                 CartHeader()
 
-                LazyColumn(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
                     items(cart, key = { it.productId }) { cartItem ->
                         val quantity = quantityMap[cartItem.productId] ?: cartItem.quantity
                         val isChecked = checkedMap[cartItem.productId] ?: true
@@ -116,7 +123,7 @@ fun CartHeader() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp, horizontal = 8.dp),
+            .padding( horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -296,6 +303,7 @@ fun CartItemCard(
 }
 @Composable
 fun CartBottomBar(totalPrice: Int) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -319,7 +327,11 @@ fun CartBottomBar(totalPrice: Int) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* xử lý thanh toán */ },
+            onClick = {
+                val intent = Intent(context, CheckoutActivity::class.java)
+                intent.putExtra("amount", totalPrice.toDouble())
+                context.startActivity(intent)
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)),
             modifier = Modifier.fillMaxWidth().height(50.dp),
             shape = RoundedCornerShape(8.dp)
