@@ -20,4 +20,6 @@
     <string name="return_history">Lịch sử hoàn trả</string>
     <string name="home_search_label">Tìm kiếm sản phẩm</string>
     <string name="order_detail">Chi tiết đơn hàng</string>
+    <string name="discount">Khuyến mãi</string>
+    <string name="best_seller">Bán chạy</string>
 </resources>
