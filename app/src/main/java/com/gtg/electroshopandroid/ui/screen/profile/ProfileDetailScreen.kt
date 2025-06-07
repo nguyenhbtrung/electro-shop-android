@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gtg.electroshopandroid.R
+import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,6 +167,7 @@ fun ProfileDetailScreen(
                         .fillMaxWidth()
                         .height(56.dp)
                 )
+                Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = viewModel::onChangeClick,
                     modifier = Modifier
@@ -173,11 +175,11 @@ fun ProfileDetailScreen(
                         .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Blue,
+                        containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     )
                 ) {
-                    Text("Đăng Nhập", fontSize = 20.sp)
+                    Text("Cập nhật", fontSize = 20.sp)
                 }
             }
         }
@@ -194,6 +196,8 @@ fun PreviewSignUpScreen() {
             .background(Color.White),
         contentAlignment = Alignment.Center,
     ) {
-        ProfileDetailScreen(onChangeSuccess = {}, onBackToProfile = {})
+        ElectroShopAndroidTheme {
+            ProfileDetailScreen(onChangeSuccess = {}, onBackToProfile = {})
+        }
     }
 }

@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class BannerDto(
     val bannerId: Int,
     val imageUrl: String,
-    val link: String,
+//    val link: String,
     val title: String,
 )
