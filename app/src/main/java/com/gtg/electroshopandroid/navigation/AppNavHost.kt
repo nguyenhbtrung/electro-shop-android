@@ -19,6 +19,7 @@ import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderDetailScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.gtg.electroshopandroid.ui.screen.product.ProductScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -49,13 +50,23 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-        composable(Screen.Home.route)     { HomeScreen() }
+        composable(Screen.Home.route)     { HomeScreen(navController = navController) }
         composable(Screen.Explore.route)  { ExploreScreen() }
         composable(Screen.Cart.route)     { CartScreen() }
         composable(Screen.Favorites.route){ FavoritesScreen() }
-        composable(Screen.Profile.route) {
-            ProfileScreen(navController)
+        composable(Screen.Profile.route)  { ProfileScreen(navController) }
+
+        composable(
+            route = Screen.Product.route,
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getInt("id") ?: return@composable
+            ProductScreen(
+                productId = productId,
+                onBack = { navController.popBackStack() }
+            )
         }
+
 
         composable(Screen.ProfileDetail.route) {
             ProfileDetailScreen(

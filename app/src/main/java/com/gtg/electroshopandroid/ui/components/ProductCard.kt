@@ -51,9 +51,11 @@ fun ProductCard(
     productCardDto: ProductCardDto,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
+    onProductClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
+        onClick = onProductClick,
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
@@ -176,7 +178,8 @@ fun PreviewProductCardLightTheme() {
         ProductCard(
             productCardDto = productCardDto,
             isFavorite = false,
-            onFavoriteClick = { /* TODO: handle click */ }
+            onFavoriteClick = { /* TODO: handle click */ },
+            onProductClick = {}
         )
     }
 }
@@ -201,7 +204,8 @@ fun PreviewProductCardDarkTheme() {
         ProductCard(
             productCardDto = productCardDto,
             isFavorite = false,
-            onFavoriteClick = { /* TODO: handle click */ }
+            onFavoriteClick = { /* TODO: handle click */ },
+            onProductClick = {}
         )
     }
 }

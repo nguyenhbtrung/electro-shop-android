@@ -30,7 +30,7 @@ data class ProductDto(
     @SerialName("categories")
     val categories: List<CategoryDto>,
     @SerialName("brand")
-    val brand: BrandDto,
+    val brand: BrandDto?,
 )
 
 @Serializable

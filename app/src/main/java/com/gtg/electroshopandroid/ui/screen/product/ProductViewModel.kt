@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.ui.screen.product
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +18,7 @@ import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.gtg.electroshopandroid.data.model.product.RecommendDto
 import com.gtg.electroshopandroid.data.repository.RecommendRepository
+import kotlin.math.log
 
 sealed interface ProductUiState {
     object Loading : ProductUiState
@@ -39,12 +41,18 @@ class ProductViewModel(
     fun getProductById(id: Int) {
         viewModelScope.launch {
             productUiState = ProductUiState.Loading
+            Log.d("Check product", id.toString())
             productUiState = try {
                 val result = productRepository.getProductById(id)
+                Log.d("Check product", result.toString())
                 ProductUiState.Success(result)
             } catch (e: IOException) {
+
                 ProductUiState.Error
             } catch (e: HttpException) {
+                ProductUiState.Error
+            } catch (e: Exception) {
+                Log.e("Check product", e.message ?: "")
                 ProductUiState.Error
             }
         }

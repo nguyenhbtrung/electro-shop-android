@@ -25,6 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.gtg.electroshopandroid.R
 import com.gtg.electroshopandroid.data.model.BannerDto
 import com.gtg.electroshopandroid.data.model.product.ProductCardDto
@@ -34,7 +36,10 @@ import com.gtg.electroshopandroid.ui.components.HorizontalScrollingProductList
 import com.gtg.electroshopandroid.ui.theme.ElectroShopAndroidTheme
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController()
+) {
 
     val productList = List(10) { index ->
         ProductCardDto(
@@ -95,12 +100,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             Spacer(Modifier.height(16.dp))
             HorizontalScrollingProductList(
                 title = stringResource(R.string.discount),
-                productCardDtoList = homeViewModel.uiState.discountedProducts
+                productCardDtoList = homeViewModel.uiState.discountedProducts,
+                navController = navController
             )
             Spacer(Modifier.height(16.dp))
             HorizontalScrollingProductList(
                 title = stringResource(R.string.best_seller),
-                productCardDtoList = homeViewModel.uiState.bestSellerProducts
+                productCardDtoList = homeViewModel.uiState.bestSellerProducts,
+                navController = navController
             )
         }
     }

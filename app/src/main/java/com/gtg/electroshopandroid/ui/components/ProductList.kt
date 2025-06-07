@@ -14,13 +14,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 
 @Composable
 fun HorizontalScrollingProductList(
     productCardDtoList: List<ProductCardDto>,
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController()
 ) {
     Column(modifier = modifier) {
         Row(modifier = Modifier.padding(16.dp)) {
@@ -39,7 +42,8 @@ fun HorizontalScrollingProductList(
                 ProductCard(
                     productCardDto = dto,
                     isFavorite = false,
-                    onFavoriteClick = {}
+                    onFavoriteClick = {},
+                    onProductClick = { navController.navigate("products/${dto.productId}")}
                 )
             }
         }

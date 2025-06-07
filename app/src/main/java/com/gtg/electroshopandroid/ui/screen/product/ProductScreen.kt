@@ -552,7 +552,8 @@ fun RecommendedProductsSection(recommendations: List<RecommendDto>) {
                     productCardDto = productCardDto,
                     isFavorite = false,
                     onFavoriteClick = { /* TODO */ },
-                    modifier = Modifier.width(180.dp)
+                    modifier = Modifier.width(180.dp),
+                    onProductClick = {}
                 )
             }
         }

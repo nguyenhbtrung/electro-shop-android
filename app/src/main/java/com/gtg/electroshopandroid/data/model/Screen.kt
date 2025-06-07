@@ -17,6 +17,8 @@ sealed class Screen(val route: String, val icon: ImageVector?, @StringRes val la
     data object Favorites : Screen("favorites", Icons.Filled.Favorite, R.string.favorites)
     data object Profile : Screen("profile", Icons.Filled.Person, R.string.profile)
 
+    data object Product : Screen("products/{id}", null, R.string.product_detail)
+
     data object Messages : Screen("messages", null, R.string.msg)
     data object Notifications: Screen("notifications", null, R.string.notifications)
 
