@@ -13,10 +13,11 @@ import com.gtg.electroshopandroid.ui.screen.favorites.FavoritesScreen
 import com.gtg.electroshopandroid.ui.screen.home.HomeScreen
 import com.gtg.electroshopandroid.ui.screen.messages.MessagesScreen
 import com.gtg.electroshopandroid.ui.screen.notifications.NotificationsScreen
+import com.gtg.electroshopandroid.ui.screen.returns.ReturnHistoryScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryScreen
+import com.gtg.electroshopandroid.ui.screen.order.OrderDetailScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileDetailScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
-import com.gtg.electroshopandroid.ui.screen.order.OrderDetailScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.gtg.electroshopandroid.ui.screen.product.ProductScreen
@@ -95,12 +96,19 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(
-            route = "order_detail/{orderId}",
+            route = Screen.OrderDetail.route,
             arguments = listOf(navArgument("orderId") { type = NavType.IntType })
         ) { backStackEntry ->
             val orderId = backStackEntry.arguments?.getInt("orderId")
             OrderDetailScreen(
                 orderId = orderId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.ReturnHistory.route) {
+            ReturnHistoryScreen(
+                navController = navController,
                 onBack = { navController.popBackStack() }
             )
         }

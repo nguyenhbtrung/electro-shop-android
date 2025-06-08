@@ -14,6 +14,7 @@ import com.gtg.electroshopandroid.data.network.ProductHistoryApiService
 import com.gtg.electroshopandroid.data.repository.ExampleRepository
 import com.gtg.electroshopandroid.data.repository.ExampleRepositoryImpl
 import com.gtg.electroshopandroid.data.network.OrderHistoryApiService
+import com.gtg.electroshopandroid.data.network.ReturnHistoryApiService
 import com.gtg.electroshopandroid.data.network.ProfileDetailApiService
 import com.gtg.electroshopandroid.data.network.RatingApiService
 import com.gtg.electroshopandroid.data.network.RecommendApiService
@@ -24,6 +25,8 @@ import com.gtg.electroshopandroid.data.repository.CartRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.CategoryRepository
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepositoryImpl
+import com.gtg.electroshopandroid.data.repository.ReturnHistoryRepository
+import com.gtg.electroshopandroid.data.repository.ReturnHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepository
 import com.gtg.electroshopandroid.data.repository.ProductHistoryRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.ProductRepository
@@ -52,6 +55,7 @@ interface AppContainer {
     val productHistoryRepository: ProductHistoryRepository
     val productRepository :ProductRepository
     val orderHistoryRepository: OrderHistoryRepository
+    val returnHistoryRepository: ReturnHistoryRepository
     val authRepository: AuthRepository
     val tokenPreferences: TokenPreferences
     val ratingRepository: RatingRepository
@@ -140,6 +144,13 @@ class DefaultAppContainer(
     }
     override val orderHistoryRepository: OrderHistoryRepository by lazy {
         OrderHistoryRepositoryImpl(orderHistoryApiService)
+    }
+
+    private val returnHistoryApiService: ReturnHistoryApiService by lazy {
+        retrofit.create(ReturnHistoryApiService::class.java)
+    }
+    override val returnHistoryRepository: ReturnHistoryRepository by lazy {
+        ReturnHistoryRepositoryImpl(returnHistoryApiService)
     }
 
     private val authApiService: AuthApiService by lazy {

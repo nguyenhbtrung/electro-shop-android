@@ -1,4 +1,4 @@
-package com.gtg.electroshopandroid.ui.screen.order
+package com.gtg.electroshopandroid.ui.screen.returns
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,100 +19,90 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gtg.electroshopandroid.ElectroShopApplication
-import com.gtg.electroshopandroid.data.model.OrderDto
-import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
+import com.gtg.electroshopandroid.data.model.ReturnDto
+import com.gtg.electroshopandroid.data.repository.ReturnHistoryRepository
 import coil.compose.AsyncImage
 import androidx.navigation.NavHostController
 import com.gtg.electroshopandroid.convertBaseUrl
 
-data class OrderItem(
+data class ReturnItem(
     val id: Int,
     val name: String,
-    val price: String,
     val quantity: Int,
     val status: String,
-    val paymentStatus: String,
-    val customerName: String,
-    val address: String,
-    val paymentMethod: String,
-    val orderDate: String,
+    val returnMethod: String,
+    val returnDate: String,
     val imageUrl: String? = null,
     val imageRes: Int = com.gtg.electroshopandroid.R.drawable.ic_launcher_foreground
 )
 
-fun OrderDto.toOrderItem(): OrderItem {
-    val firstOrderItem = this.orderItems.firstOrNull()
-    return OrderItem(
-        id = this.orderId,
-        name = firstOrderItem?.productName ?: "Đơn hàng trống",
-        price = "${String.format("%,.0f", this.total)}₫",
-        quantity = firstOrderItem?.quantity ?: 0,
-        status = when(this.status?.lowercase()) {
-            "pending" -> "Đang chuẩn bị"
-            "successed" -> "Đã hoàn thành"
-            "shipping" -> "Đang vận chuyển"
-            "cancelled" -> "Đã hủy"
-            else -> this.status ?: "Không xác định"
+fun ReturnDto.toReturnItem(): ReturnItem {
+    val firstReturnProduct = this.returnProducts.firstOrNull()
+    return ReturnItem(
+        id = this.returnId,
+        name = firstReturnProduct?.name ?: "Sản phẩm hoàn trả",
+        quantity = firstReturnProduct?.returnQuantity ?: 0,
+        status = when(this.status.lowercase()) {
+            "pending" -> "Đang xử lý"
+            "approved" -> "Đã duyệt"
+            "rejected" -> "Từ chối"
+            "completed" -> "Hoàn thành"
+            "refunded" -> "Đã hoàn tiền"
+            else -> this.status
         },
-        paymentStatus = when(this.paymentStatus?.lowercase()) {
-            "paid" -> "Đã thanh toán"
-            "pending" -> "Chờ thanh toán"
-            "refund" -> "Đã hoàn tiền"
-            else -> this.paymentStatus ?: ""
+        returnMethod = when(this.returnMethod.lowercase()) {
+            "refund" -> "Hoàn tiền"
+            "exchange" -> "Đổi hàng"
+            "repair" -> "Sửa chữa"
+            else -> this.returnMethod
         },
-        customerName = this.fullName ?: "Khách hàng",
-        address = this.address ?: "",
-        paymentMethod = when(this.paymentMethod?.lowercase()) {
-            "vnpay" -> "Chuyển khoản"
-            "cod" -> "Thanh toán khi nhận hàng"
-            else -> this.paymentMethod ?: ""
-        },
-        orderDate = this.timeStamp?.take(10) ?: "",
-        imageUrl = firstOrderItem?.productImage?.let { convertBaseUrl(it) },
+        returnDate = this.timeStamp.take(10),
+        imageUrl = firstReturnProduct?.image?.let { convertBaseUrl(it) },
         imageRes = com.gtg.electroshopandroid.R.drawable.ic_launcher_foreground
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderHistoryScreen(
+fun ReturnHistoryScreen(
     navController: NavHostController,
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current.applicationContext as ElectroShopApplication
-    val orderHistoryRepository: OrderHistoryRepository = context.container.orderHistoryRepository
+    val returnHistoryRepository: ReturnHistoryRepository = context.container.returnHistoryRepository
 
-    val viewModel: OrderHistoryViewModel = viewModel(
+    val viewModel: ReturnHistoryViewModel = viewModel(
         factory = object : androidx.lifecycle.ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return OrderHistoryViewModel(orderHistoryRepository) as T
+                return ReturnHistoryViewModel(returnHistoryRepository) as T
             }
         }
     )
 
     // Tabs
-    val tabs = listOf("Tất cả", "Đã hoàn thành", "Đang chuẩn bị", "Đang vận chuyển", "Đã hủy")
+    val tabs = listOf("Tất cả", "Đang xử lý", "Đã duyệt", "Từ chối", "Hoàn thành", "Đã hoàn tiền")
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val orders by viewModel.orders.collectAsState()
-    val allOrders = remember(orders) { orders.map { it.toOrderItem() } }
-    var filteredOrders by remember { mutableStateOf<List<OrderItem>>(emptyList()) }
+    val returns by viewModel.returns.collectAsState()
+    val allReturns = remember(returns) { returns.map { it.toReturnItem() } }
+    var filteredReturns by remember { mutableStateOf<List<ReturnItem>>(emptyList()) }
 
-    // Filter orders theo tab
-    LaunchedEffect(selectedTabIndex, allOrders) {
-        filteredOrders = when (selectedTabIndex) {
-            0 -> allOrders
-            1 -> allOrders.filter { it.status == "Đã hoàn thành" }
-            2 -> allOrders.filter { it.status == "Đang chuẩn bị" }
-            3 -> allOrders.filter { it.status == "Đang vận chuyển" }
-            4 -> allOrders.filter { it.status == "Đã hủy" }
-            else -> allOrders
+    // Filter returns theo tab
+    LaunchedEffect(selectedTabIndex, allReturns) {
+        filteredReturns = when (selectedTabIndex) {
+            0 -> allReturns
+            1 -> allReturns.filter { it.status == "Đang xử lý" }
+            2 -> allReturns.filter { it.status == "Đã duyệt" }
+            3 -> allReturns.filter { it.status == "Từ chối" }
+            4 -> allReturns.filter { it.status == "Hoàn thành" }
+            5 -> allReturns.filter { it.status == "Đã hoàn tiền" }
+            else -> allReturns
         }
     }
 
     // Tải dữ liệu khi mở màn hình
     LaunchedEffect(Unit) {
-        viewModel.loadOrders()
+        viewModel.loadReturns()
     }
 
     Column(
@@ -123,7 +113,7 @@ fun OrderHistoryScreen(
         TopAppBar(
             title = {
                 Text(
-                    "Lịch sử đơn hàng",
+                    "Lịch sử hoàn trả",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -163,17 +153,17 @@ fun OrderHistoryScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
             when {
-                filteredOrders.isEmpty() && allOrders.isNotEmpty() -> {
+                filteredReturns.isEmpty() && allReturns.isNotEmpty() -> {
                     Text(
-                        text = "Không có đơn hàng nào trong danh mục này",
+                        text = "Không có yêu cầu hoàn trả nào trong danh mục này",
                         modifier = Modifier.align(Alignment.Center),
                         fontSize = 16.sp,
                         color = Color.Gray
                     )
                 }
-                allOrders.isEmpty() -> {
+                allReturns.isEmpty() -> {
                     Text(
-                        text = "Không có đơn hàng nào",
+                        text = "Không có yêu cầu hoàn trả nào",
                         modifier = Modifier.align(Alignment.Center),
                         fontSize = 16.sp,
                         color = Color.Gray
@@ -187,11 +177,8 @@ fun OrderHistoryScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(top = 16.dp)
                     ) {
-                        items(filteredOrders) { order ->
-                            OrderHistoryCard(
-                                order = order,
-                                onDetailClick = { navController.navigate("order_detail/${order.id}") }
-                            )
+                        items(filteredReturns) { returnItem ->
+                            ReturnHistoryCard(returnItem = returnItem)
                         }
                         item {
                             Card(
@@ -211,21 +198,10 @@ fun OrderHistoryScreen(
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        text = "Hiển thị: ${filteredOrders.size} / ${allOrders.size} đơn hàng",
+                                        text = "Hiển thị: ${filteredReturns.size} / ${allReturns.size} yêu cầu hoàn trả",
                                         color = Color.Gray,
                                         fontSize = 12.sp
                                     )
-                                    if (filteredOrders.isNotEmpty()) {
-                                        val totalValue = filteredOrders.sumOf {
-                                            it.price.replace("₫", "").replace(",", "").toDoubleOrNull() ?: 0.0
-                                        }
-                                        Text(
-                                            text = "Tổng giá trị: ${String.format("%,.0f", totalValue)}₫",
-                                            color = Color.Blue,
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
                                 }
                             }
                         }
@@ -237,10 +213,7 @@ fun OrderHistoryScreen(
 }
 
 @Composable
-fun OrderHistoryCard(
-    order: OrderItem,
-    onDetailClick: () -> Unit
-) {
+fun ReturnHistoryCard(returnItem: ReturnItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -256,8 +229,8 @@ fun OrderHistoryCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = order.imageUrl,
-                    contentDescription = order.name,
+                    model = returnItem.imageUrl,
+                    contentDescription = returnItem.name,
                     modifier = Modifier
                         .size(60.dp)
                         .background(
@@ -265,34 +238,39 @@ fun OrderHistoryCard(
                             RoundedCornerShape(8.dp)
                         )
                         .padding(8.dp),
-                    placeholder = painterResource(id = order.imageRes),
-                    error = painterResource(id = order.imageRes)
+                    placeholder = painterResource(id = returnItem.imageRes),
+                    error = painterResource(id = returnItem.imageRes)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = order.name,
+                        text = returnItem.name,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary,
                         lineHeight = 18.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
-                    if (order.quantity > 0) {
+                    if (returnItem.quantity > 0) {
                         Text(
-                            text = "Số lượng: x${order.quantity}",
+                            text = "Số lượng: x${returnItem.quantity}",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                     }
                     Text(
-                        text = order.price,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error
+                        text = "Phương thức: ${returnItem.returnMethod}",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Ngày: ${returnItem.returnDate}",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -302,57 +280,22 @@ fun OrderHistoryCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = order.status,
-                    color = when(order.status) {
-                        "Đã hoàn thành" -> MaterialTheme.colorScheme.secondary
-                        "Đang chuẩn bị" -> MaterialTheme.colorScheme.tertiary
-                        "Đang vận chuyển" -> MaterialTheme.colorScheme.primary
-                        "Đã hủy" -> MaterialTheme.colorScheme.error
+                    text = returnItem.status,
+                    color = when(returnItem.status) {
+                        "Hoàn thành" -> MaterialTheme.colorScheme.secondary
+                        "Đang xử lý" -> MaterialTheme.colorScheme.tertiary
+                        "Đã duyệt" -> MaterialTheme.colorScheme.primary
+                        "Từ chối" -> MaterialTheme.colorScheme.error
+                        "Đã hoàn tiền" -> Color(0xFF4CAF50)
                         else -> MaterialTheme.colorScheme.onSurfaceVariant
                     },
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
-
-                Row {
-                    OutlinedButton(
-                        onClick = onDetailClick,
-                        modifier = Modifier
-                            .height(32.dp)
-                            .padding(end = 4.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                    ) {
-                        Text(
-                            text = "Chi tiết",
-                            fontSize = 10.sp
-                        )
-                    }
-                    OutlinedButton(
-                        onClick = { /* Xử lý đánh giá */ },
-                        modifier = Modifier.height(32.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.secondary
-                        ),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                    ) {
-                        Text(
-                            text = "Đánh giá",
-                            fontSize = 10.sp
-                        )
-                    }
-                }
             }
         }
     }
 }
-
-
-
