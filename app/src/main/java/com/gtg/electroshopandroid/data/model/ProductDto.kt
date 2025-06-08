@@ -11,7 +11,7 @@ data class ProductDto(
     @SerialName("name")
     val name: String,
     @SerialName("info")
-    val info: String,
+    val info: String? = null,
     @SerialName("originalPrice")
     val originalPrice: Double,
     @SerialName("discountedPrice")
@@ -23,9 +23,9 @@ data class ProductDto(
     @SerialName("averageRating")
     val averageRating: Double,
     @SerialName("stock")
-    val stock: Int,
+    val stock: Int? = null,
     @SerialName("unitsSold")
-    val unitsSold: Int,
+    val unitsSold: Int? = null,
     @SerialName("productImages")
     val productImages: List<ProductImageDto>,
     @SerialName("categories")

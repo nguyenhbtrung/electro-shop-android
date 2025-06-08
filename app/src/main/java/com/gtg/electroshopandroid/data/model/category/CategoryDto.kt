@@ -16,12 +16,12 @@ data class CategoryDto(
     )
 @Serializable
 data class CategoryProductDto(
-    @SerialName("productId")
     val productId: Int,
-
-    @SerialName("name")
     val name: String,
-
-    @SerialName("description")
-    val description: String? = null,
+    val originalPrice: Double,
+    val discountedPrice: Double,
+    val discountType: String,
+    val discountValue: Double,
+    val averageRating: Double,
+    val images: List<String>,
 )

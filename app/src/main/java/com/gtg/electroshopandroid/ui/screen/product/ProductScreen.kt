@@ -32,7 +32,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.data.model.ProductDto
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -352,7 +351,7 @@ fun ProductTabs(product: ProductDto) {
             modifier = Modifier.fillMaxWidth() // không padding ngang nữa, để căn sát lề cha
         ) {
             Text(
-                text = product.info,
+                text = product.info ?: "Không có thông tin",
                 modifier = Modifier.fillMaxWidth(),
                 color = Color.DarkGray
             )
