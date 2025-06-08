@@ -1,4 +1,4 @@
-package com.gtg.electroshopandroid.data.model
+package com.gtg.electroshopandroid.data.model.category
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

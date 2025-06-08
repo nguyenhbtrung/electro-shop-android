@@ -1,6 +1,6 @@
 package com.gtg.electroshopandroid.data.network
 
-import com.gtg.electroshopandroid.data.model.CategoryDto
+import com.gtg.electroshopandroid.data.model.category.CategoryDto
 import com.gtg.electroshopandroid.data.model.ProductDto
 import retrofit2.http.GET;
 import retrofit2.http.Path

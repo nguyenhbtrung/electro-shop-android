@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.data.model
 
+import com.gtg.electroshopandroid.data.model.category.CategoryDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
