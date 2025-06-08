@@ -16,11 +16,19 @@ import com.gtg.electroshopandroid.ui.screen.notifications.NotificationsScreen
 import com.gtg.electroshopandroid.ui.screen.returns.ReturnHistoryScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderDetailScreen
+import com.gtg.electroshopandroid.ui.screen.order.CreateReturnScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileDetailScreen
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.gtg.electroshopandroid.ui.screen.product.ProductScreen
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import com.gtg.electroshopandroid.ElectroShopApplication
+import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryViewModel
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -111,6 +119,41 @@ fun AppNavHost(navController: NavHostController) {
                 navController = navController,
                 onBack = { navController.popBackStack() }
             )
+        }
+
+        composable(
+            route = Screen.CreateReturn.route, // Thay vì "create_return/{orderId}"
+            arguments = listOf(navArgument("orderId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getInt("orderId") ?: return@composable
+
+            val context = LocalContext.current.applicationContext as ElectroShopApplication
+            val orderHistoryRepository = context.container.orderHistoryRepository
+
+            val viewModel: OrderHistoryViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        @Suppress("UNCHECKED_CAST")
+                        return OrderHistoryViewModel(orderHistoryRepository) as T
+                    }
+                }
+            )
+
+            LaunchedEffect(orderId) {
+                viewModel.loadOrders()
+            }
+
+            val orders by viewModel.orders.collectAsState()
+            val orderDto = orders.find { it.orderId == orderId }
+
+            if (orderDto != null) {
+                CreateReturnScreen(
+                    orderId = orderId,
+                    orderDto = orderDto,
+                    navController = navController,
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

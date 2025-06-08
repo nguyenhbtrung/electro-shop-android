@@ -180,31 +180,6 @@ fun ReturnHistoryScreen(
                         items(filteredReturns) { returnItem ->
                             ReturnHistoryCard(returnItem = returnItem)
                         }
-                        item {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 16.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(16.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = "Thống kê",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text = "Hiển thị: ${filteredReturns.size} / ${allReturns.size} yêu cầu hoàn trả",
-                                        color = Color.Gray,
-                                        fontSize = 12.sp
-                                    )
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -213,7 +188,10 @@ fun ReturnHistoryScreen(
 }
 
 @Composable
-fun ReturnHistoryCard(returnItem: ReturnItem) {
+fun ReturnHistoryCard(
+    returnItem: ReturnItem,
+    onDetailClick: () -> Unit = {}
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -232,7 +210,7 @@ fun ReturnHistoryCard(returnItem: ReturnItem) {
                     model = returnItem.imageUrl,
                     contentDescription = returnItem.name,
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(80.dp)
                         .background(
                             MaterialTheme.colorScheme.surfaceVariant,
                             RoundedCornerShape(8.dp)
@@ -245,22 +223,30 @@ fun ReturnHistoryCard(returnItem: ReturnItem) {
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = returnItem.name,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary,
-                        lineHeight = 18.sp
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    if (returnItem.quantity > 0) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = "Số lượng: x${returnItem.quantity}",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = returnItem.name,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        if (returnItem.quantity > 0) {
+                            Text(
+                                text = "x${returnItem.quantity}",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
+
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Phương thức: ${returnItem.returnMethod}",
                         fontSize = 12.sp,
@@ -280,7 +266,7 @@ fun ReturnHistoryCard(returnItem: ReturnItem) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = returnItem.status,
@@ -295,7 +281,23 @@ fun ReturnHistoryCard(returnItem: ReturnItem) {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
+
+                OutlinedButton(
+                    onClick = onDetailClick,
+                    modifier = Modifier.height(32.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                ) {
+                    Text(
+                        text = "Chi tiết",
+                        fontSize = 10.sp
+                    )
+                }
             }
         }
     }
 }
+

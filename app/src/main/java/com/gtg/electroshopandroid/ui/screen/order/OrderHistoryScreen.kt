@@ -1,5 +1,9 @@
 package com.gtg.electroshopandroid.ui.screen.order
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +28,10 @@ import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import coil.compose.AsyncImage
 import androidx.navigation.NavHostController
 import com.gtg.electroshopandroid.convertBaseUrl
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.clickable
+import com.gtg.electroshopandroid.data.model.Screen
 
 data class OrderItem(
     val id: Int,
@@ -52,6 +60,7 @@ fun OrderDto.toOrderItem(): OrderItem {
             "successed" -> "Đã hoàn thành"
             "shipping" -> "Đang vận chuyển"
             "cancelled" -> "Đã hủy"
+            "return" -> "Trả hàng"
             else -> this.status ?: "Không xác định"
         },
         paymentStatus = when(this.paymentStatus?.lowercase()) {
@@ -91,6 +100,9 @@ fun OrderHistoryScreen(
         }
     )
 
+    var showCancelDialog by remember { mutableStateOf(false) }
+    var orderToCancel by remember { mutableStateOf<Int?>(null) }
+
     // Tabs
     val tabs = listOf("Tất cả", "Đã hoàn thành", "Đang chuẩn bị", "Đang vận chuyển", "Đã hủy")
     var selectedTabIndex by remember { mutableStateOf(0) }
@@ -113,6 +125,50 @@ fun OrderHistoryScreen(
     // Tải dữ liệu khi mở màn hình
     LaunchedEffect(Unit) {
         viewModel.loadOrders()
+    }
+
+    if (showCancelDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showCancelDialog = false
+                orderToCancel = null
+            },
+            title = {
+                Text(
+                    text = "Xác nhận hủy đơn hàng",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text("Bạn có chắc chắn muốn hủy đơn hàng này không?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        orderToCancel?.let { orderId ->
+                            viewModel.cancelOrder(orderId)
+                        }
+                        showCancelDialog = false
+                        orderToCancel = null
+                    }
+                ) {
+                    Text(
+                        text = "Có",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showCancelDialog = false
+                        orderToCancel = null
+                    }
+                ) {
+                    Text("Không")
+                }
+            }
+        )
     }
 
     Column(
@@ -187,10 +243,20 @@ fun OrderHistoryScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(top = 16.dp)
                     ) {
-                        items(filteredOrders) { order ->
+                        items(filteredOrders.zip(orders)) { (orderItem, orderDto) ->
                             OrderHistoryCard(
-                                order = order,
-                                onDetailClick = { navController.navigate("order_detail/${order.id}") }
+                                order = orderItem,
+                                orderDto = orderDto,
+                                onDetailClick = {
+                                    navController.navigate("order_detail/${orderItem.id}")
+                                },
+                                onCancelClick = {
+                                    orderToCancel = orderItem.id
+                                    showCancelDialog = true
+                                },
+                                onReturnClick = {
+                                    navController.navigate(Screen.CreateReturn.route.replace("{orderId}", orderItem.id.toString()))
+                                }
                             )
                         }
                         item {
@@ -204,17 +270,6 @@ fun OrderHistoryScreen(
                                     modifier = Modifier.padding(16.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text(
-                                        text = "Thống kê",
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    Text(
-                                        text = "Hiển thị: ${filteredOrders.size} / ${allOrders.size} đơn hàng",
-                                        color = Color.Gray,
-                                        fontSize = 12.sp
-                                    )
                                     if (filteredOrders.isNotEmpty()) {
                                         val totalValue = filteredOrders.sumOf {
                                             it.price.replace("₫", "").replace(",", "").toDoubleOrNull() ?: 0.0
@@ -239,12 +294,19 @@ fun OrderHistoryScreen(
 @Composable
 fun OrderHistoryCard(
     order: OrderItem,
-    onDetailClick: () -> Unit
+    orderDto: OrderDto,
+    onDetailClick: () -> Unit,
+    onCancelClick: () -> Unit = {}, // Callback cho nút Hủy
+    onReturnClick: () -> Unit = {} // Callback cho nút Trả hàng
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+    val hasMultipleProducts = orderDto.orderItems.size > 1
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .clickable { onDetailClick() },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -259,7 +321,7 @@ fun OrderHistoryCard(
                     model = order.imageUrl,
                     contentDescription = order.name,
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(80.dp)
                         .background(
                             MaterialTheme.colorScheme.surfaceVariant,
                             RoundedCornerShape(8.dp)
@@ -272,27 +334,86 @@ fun OrderHistoryCard(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = order.name,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary,
-                        lineHeight = 18.sp
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    if (order.quantity > 0) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = "Số lượng: x${order.quantity}",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = order.name,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                        if (order.quantity > 0) {
+                            Text(
+                                text = "x${order.quantity}",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
+
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = order.price,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = expandVertically(
+                    expandFrom = Alignment.Top,
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300)),
+                exit = shrinkVertically(
+                    shrinkTowards = Alignment.Top,
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            ) {
+                Column(
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    // Hiển thị các sản phẩm từ index 1 trở đi
+                    orderDto.orderItems.drop(1).forEach { item ->
+                        AdditionalProductItem(
+                            name = item.productName,
+                            quantity = item.quantity,
+                            imageUrl = item.productImage?.let { convertBaseUrl(it) }
+                        )
+                    }
+                }
+            }
+
+            if (hasMultipleProducts) {
+                TextButton(
+                    onClick = { isExpanded = !isExpanded },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        text = if (isExpanded) "Thu gọn" else "Xem thêm ${orderDto.orderItems.size - 1} sản phẩm",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Icon(
+                        imageVector = if (isExpanded)
+                            Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(start = 4.dp)
                     )
                 }
             }
@@ -307,52 +428,121 @@ fun OrderHistoryCard(
                 Text(
                     text = order.status,
                     color = when(order.status) {
-                        "Đã hoàn thành" -> MaterialTheme.colorScheme.secondary
-                        "Đang chuẩn bị" -> MaterialTheme.colorScheme.tertiary
+                        "Đã hoàn thành" -> MaterialTheme.colorScheme.primary
+                        "Đang chuẩn bị" -> MaterialTheme.colorScheme.primary
                         "Đang vận chuyển" -> MaterialTheme.colorScheme.primary
-                        "Đã hủy" -> MaterialTheme.colorScheme.error
-                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                        "Đã hủy" -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.primary
                     },
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
 
-                Row {
-                    OutlinedButton(
-                        onClick = onDetailClick,
-                        modifier = Modifier
-                            .height(32.dp)
-                            .padding(end = 4.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                    ) {
-                        Text(
-                            text = "Chi tiết",
-                            fontSize = 10.sp
-                        )
+                when (order.status) {
+                    "Đang chuẩn bị" -> {
+                        OutlinedButton(
+                            onClick = { onCancelClick() },
+                            modifier = Modifier.height(32.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            ),
+                            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                        ) {
+                            Text(
+                                text = "Hủy",
+                                fontSize = 10.sp
+                            )
+                        }
                     }
-                    OutlinedButton(
-                        onClick = { /* Xử lý đánh giá */ },
-                        modifier = Modifier.height(32.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.secondary
-                        ),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                    ) {
-                        Text(
-                            text = "Đánh giá",
-                            fontSize = 10.sp
-                        )
+                    "Đã hoàn thành" -> {
+                        OutlinedButton(
+                            onClick = { onReturnClick() },
+                            modifier = Modifier.height(32.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            ),
+                            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                        ) {
+                            Text(
+                                text = "Trả hàng",
+                                fontSize = 10.sp
+                            )
+                        }
+                    }
+                    else -> {
+                        OutlinedButton(
+                            onClick = { },
+                            enabled = false,
+                            modifier = Modifier.height(32.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                            ),
+                            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                        ) {
+                            Text(
+                                text = "Hủy",
+                                fontSize = 10.sp
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
+@Composable
+fun AdditionalProductItem(
+    name: String,
+    quantity: Int,
+    imageUrl: String?
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = name,
+            modifier = Modifier
+                .size(50.dp)
+                .background(
+                    MaterialTheme.colorScheme.surfaceVariant,
+                    RoundedCornerShape(6.dp)
+                )
+                .padding(6.dp),
+            placeholder = painterResource(id = com.gtg.electroshopandroid.R.drawable.ic_launcher_foreground),
+            error = painterResource(id = com.gtg.electroshopandroid.R.drawable.ic_launcher_foreground)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = name,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+            Text(
+                text = "x$quantity",
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
 
 
 

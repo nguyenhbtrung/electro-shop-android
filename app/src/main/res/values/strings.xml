@@ -23,4 +23,5 @@
     <string name="discount">Khuyến mãi</string>
     <string name="best_seller">Bán chạy</string>
     <string name="product_detail">Chi tiết sản phẩm</string>
+    <string name="create_return">Tạo yêu cầu hoàn trả</string>
 </resources>
