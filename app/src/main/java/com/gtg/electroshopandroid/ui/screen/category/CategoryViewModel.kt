@@ -14,8 +14,9 @@ import com.gtg.electroshopandroid.ElectroShopApplication
 import retrofit2.HttpException
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import com.gtg.electroshopandroid.data.model.CategoryDto
+import com.gtg.electroshopandroid.data.model.category.CategoryDto
 import com.gtg.electroshopandroid.data.model.ProductDto
+import com.gtg.electroshopandroid.data.model.category.CategoryProductDto
 import com.gtg.electroshopandroid.data.repository.CategoryRepository
 
 
@@ -27,7 +28,7 @@ sealed interface CategoryUiState {
 }
 sealed interface ProductByCategoryUiState {
     object Loading : ProductByCategoryUiState
-    data class Success(val products: List<ProductDto>) : ProductByCategoryUiState
+    data class Success(val products: List<CategoryProductDto>) : ProductByCategoryUiState
     object Error : ProductByCategoryUiState
 }
 class CategoryViewModel(
