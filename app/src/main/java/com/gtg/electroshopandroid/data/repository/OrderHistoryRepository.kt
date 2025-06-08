@@ -20,7 +20,7 @@ class OrderHistoryRepositoryImpl(
         return try {
             val response = orderHistoryApiService.cancelOrder(orderId)
             response.isSuccessful
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -29,7 +29,7 @@ class OrderHistoryRepositoryImpl(
         return try {
             val response = orderHistoryApiService.createReturnRequest(request)
             response.isSuccessful
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gtg.electroshopandroid.data.model.OrderDto
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
-import com.gtg.electroshopandroid.data.model.CreateReturnRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -38,14 +37,12 @@ class OrderHistoryViewModel(
         }
     }
 
-    // Thêm function hủy đơn hàng
     fun cancelOrder(orderId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 val success = orderHistoryRepository.cancelOrder(orderId)
                 if (success) {
-                    // Refresh danh sách đơn hàng sau khi hủy thành công
                     loadOrders()
                 } else {
                     _error.value = "Không thể hủy đơn hàng"
@@ -57,27 +54,5 @@ class OrderHistoryViewModel(
             }
         }
     }
-
-    fun createReturnRequest(request: CreateReturnRequest) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val success = orderHistoryRepository.createReturnRequest(request)
-                if (success) {
-                    _error.value = "Tạo yêu cầu hoàn trả thành công!"
-                    // Refresh danh sách đơn hàng
-                    loadOrders()
-                } else {
-                    _error.value = "Không thể tạo yêu cầu hoàn trả"
-                }
-            } catch (e: Exception) {
-                _error.value = e.message ?: "Có lỗi xảy ra khi tạo yêu cầu hoàn trả"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-
 }
 

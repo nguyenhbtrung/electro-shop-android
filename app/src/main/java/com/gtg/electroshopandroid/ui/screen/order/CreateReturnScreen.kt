@@ -28,6 +28,7 @@ import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.R
 import com.gtg.electroshopandroid.data.model.*
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +60,9 @@ fun CreateReturnScreen(
     // Handle submit success
     LaunchedEffect(formState.submitSuccess) {
         if (formState.submitSuccess) {
-            onBack()
+            navController.navigate(Screen.OrderHistory.route) {
+                popUpTo(Screen.CreateReturn.route) { inclusive = true }
+            }
         }
     }
 
@@ -87,7 +90,7 @@ fun CreateReturnScreen(
             },
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             }
         )
@@ -98,7 +101,6 @@ fun CreateReturnScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Order Info
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -121,7 +123,6 @@ fun CreateReturnScreen(
                 }
             }
 
-            // Detail Input
             item {
                 OutlinedTextField(
                     value = formState.detail,
@@ -139,7 +140,6 @@ fun CreateReturnScreen(
                 )
             }
 
-            // Return Method Selection
             item {
                 Text(
                     text = "Phương thức xử lý:",
@@ -147,7 +147,7 @@ fun CreateReturnScreen(
                     fontSize = 16.sp
                 )
 
-                ReturnMethod.values().forEach { method ->
+                ReturnMethod.entries.forEach { method ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -161,14 +161,13 @@ fun CreateReturnScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = method.displayName,
+                            text = ReturnMethod.fromValue(method.value).displayName,
                             fontSize = 14.sp
                         )
                     }
                 }
             }
 
-            // Product Selection
             item {
                 Text(
                     text = "Chọn sản phẩm cần hoàn trả:",
@@ -223,7 +222,6 @@ fun CreateReturnScreen(
                 }
             }
 
-            // Submit Button
             item {
                 Button(
                     onClick = { viewModel.submitReturnRequest() },

@@ -104,8 +104,8 @@ enum class ReturnMethod(val value: Int, val displayName: String) {
         REPAIR(2, "Sửa chữa");
 
         companion object {
-                fun fromValue(value: Int): ReturnMethod? {
-                        return values().find { it.value == value }
+                fun fromValue(value: Int): ReturnMethod {
+                        return entries.find { it.value == value } ?: REFUND
                 }
         }
 }

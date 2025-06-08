@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,7 +30,10 @@ import com.gtg.electroshopandroid.convertBaseUrl
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextAlign
 import com.gtg.electroshopandroid.data.model.Screen
+import java.util.Locale
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 data class OrderItem(
     val id: Int,
@@ -53,7 +55,7 @@ fun OrderDto.toOrderItem(): OrderItem {
     return OrderItem(
         id = this.orderId,
         name = firstOrderItem?.productName ?: "Đơn hàng trống",
-        price = "${String.format("%,.0f", this.total)}₫",
+        price = "${String.format(Locale.US, "%,.0f", this.total)}₫",
         quantity = firstOrderItem?.quantity ?: 0,
         status = when(this.status?.lowercase()) {
             "pending" -> "Đang chuẩn bị"
@@ -105,8 +107,10 @@ fun OrderHistoryScreen(
 
     // Tabs
     val tabs = listOf("Tất cả", "Đã hoàn thành", "Đang chuẩn bị", "Đang vận chuyển", "Đã hủy")
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val orders by viewModel.orders.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
     val allOrders = remember(orders) { orders.map { it.toOrderItem() } }
     var filteredOrders by remember { mutableStateOf<List<OrderItem>>(emptyList()) }
 
@@ -186,7 +190,7 @@ fun OrderHistoryScreen(
             },
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
@@ -219,6 +223,29 @@ fun OrderHistoryScreen(
 
         Box(modifier = Modifier.fillMaxSize()) {
             when {
+                isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                error != null -> {
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = error!!,
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                        Button(
+                            onClick = { viewModel.loadOrders() },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text("Thử lại")
+                        }
+                    }
+                }
                 filteredOrders.isEmpty() && allOrders.isNotEmpty() -> {
                     Text(
                         text = "Không có đơn hàng nào trong danh mục này",
@@ -275,7 +302,7 @@ fun OrderHistoryScreen(
                                             it.price.replace("₫", "").replace(",", "").toDoubleOrNull() ?: 0.0
                                         }
                                         Text(
-                                            text = "Tổng giá trị: ${String.format("%,.0f", totalValue)}₫",
+                                            text = "Tổng giá trị: ${String.format(Locale.US, "%,.0f", totalValue)}₫",
                                             color = Color.Blue,
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Bold
@@ -446,7 +473,7 @@ fun OrderHistoryCard(
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error
                             ),
-                            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                            border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(width = 1.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                         ) {
                             Text(
@@ -462,7 +489,7 @@ fun OrderHistoryCard(
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error
                             ),
-                            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                            border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(width = 1.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                         ) {
                             Text(
@@ -480,7 +507,7 @@ fun OrderHistoryCard(
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
                             ),
-                            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                            border = ButtonDefaults.outlinedButtonBorder(enabled = true).copy(width = 1.dp),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
                         ) {
                             Text(
