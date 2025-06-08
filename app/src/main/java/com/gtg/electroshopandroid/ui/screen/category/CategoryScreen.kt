@@ -73,14 +73,14 @@ fun CategoryScreen(
                     onBrandSelected = { selectedBrand = it; page = 0 },
                     selectedRating = selectedRating,
                     onRatingSelected = { selectedRating = it; page = 0 },
-                    brandList = listOf("Tất cả", "Samsung", "Apple") // hoặc lấy từ API
+                    brandList = listOf("Tất cả", "Samsung", "Apple")
                 )
 
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(8.dp),
-                    modifier = Modifier.weight(1f)  // Chiếm phần còn lại, tránh đè lên filter
+                    modifier = Modifier.weight(1f)
                 ) {
                     items(pagedProducts) { product ->
                         ProductCard(

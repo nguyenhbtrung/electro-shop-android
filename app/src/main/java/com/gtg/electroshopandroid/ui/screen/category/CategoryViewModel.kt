@@ -36,25 +36,17 @@ class CategoryViewModel(
 ) : ViewModel() {
     var productByCategoryUiState: ProductByCategoryUiState by mutableStateOf(ProductByCategoryUiState.Loading)
         private set
-    var categoryUiState: CategoryUiState by mutableStateOf(CategoryUiState.Loading)
-        private set
     var errorMessage: String? by mutableStateOf(null)
         private set
-    fun getCategoryByProductId(categoryId: Int) {
+    fun getFilteredProducts(categoryId: Int, priceFilter: Int, brandId: Int, ratingFilter: Int) {
         viewModelScope.launch {
-            categoryUiState = CategoryUiState.Loading
-            categoryUiState = try {
-                val result = categoryRepository.getCategory(categoryId)
-                CategoryUiState.Success(result)
-            } catch (e: IOException) {
-                errorMessage = "Network error: ${e.message}"
-                CategoryUiState.Error
-            } catch (e: HttpException) {
-                errorMessage = "HTTP error ${e.code()}: ${e.message()}"
-                CategoryUiState.Error
+            productByCategoryUiState = ProductByCategoryUiState.Loading
+            try {
+                val result = categoryRepository.filterProductsByCategory(categoryId, priceFilter, brandId, ratingFilter)
+                productByCategoryUiState = ProductByCategoryUiState.Success(result)
             } catch (e: Exception) {
-                errorMessage = "Unexpected error: ${e.message}"
-                CategoryUiState.Error
+                errorMessage = "Error: ${e.message}"
+                productByCategoryUiState = ProductByCategoryUiState.Error
             }
         }
     }
