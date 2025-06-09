@@ -33,6 +33,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import java.util.Locale
 
 @Composable
 fun CategoryScreen(
@@ -125,7 +126,6 @@ fun CategoryScreen(
                     items(pagedProducts) { product ->
                         ProductCard(
                             productCardDto = product.toProductCardDto(),
-                            isFavorite = false,
                             onFavoriteClick = { /* TODO */ },
                             onProductClick = { onProductClick(product.productId) }
                         )
@@ -141,10 +141,11 @@ fun CategoryProductDto.toProductCardDto(): ProductCardDto  {
         name = this.name,
         originalPrice = this.originalPrice,
         discountedPrice = this.discountedPrice,
-        averageRating =  String.format("%.1f", this.averageRating ?: 0.0).toDouble(),
+        averageRating =  String.format(Locale.US,"%.1f", this.averageRating ?: 0.0).toDouble(),
         images =  this.images.map { convertBaseUrl(it) },
         discountType = this.discountType,
         discountValue = this.discountValue,
+        isFavorite = this.isFavorite
     )
 }
 @Composable

@@ -49,12 +49,11 @@ import com.gtg.electroshopandroid.ui.theme.onSurfaceLight
 @Composable
 fun ProductCard(
     productCardDto: ProductCardDto,
-    isFavorite: Boolean,
-    onFavoriteClick: () -> Unit,
+    onFavoriteClick: (Int) -> Unit,
     onProductClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val imageUrl = if (productCardDto.images.size > 0) productCardDto.images[0] else ""
+    val imageUrl = if (productCardDto.images.isNotEmpty()) productCardDto.images[0] else ""
     Card(
         onClick = onProductClick,
         shape = RoundedCornerShape(16.dp),
@@ -142,14 +141,14 @@ fun ProductCard(
 
             // Favorite Icon
             IconButton(
-                onClick = onFavoriteClick,
+                onClick = { onFavoriteClick(productCardDto.productId) },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .background(inversePrimaryLight, shape = RoundedCornerShape(bottomStart = 8.dp, topEnd = 16.dp))
                     .size(32.dp)
             ) {
                 Icon(
-                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    imageVector = if (productCardDto.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorite",
                     tint = onSurfaceLight,
                     modifier = Modifier.padding(4.dp)
@@ -172,13 +171,13 @@ fun PreviewProductCardLightTheme() {
         discountedPrice = 9000000.0,
         discountType = "Percentage",
         discountValue = 10.0,
-        averageRating = 1.0
+        averageRating = 1.0,
+        isFavorite = false
     )
 
     ElectroShopAndroidTheme(darkTheme = false) {
         ProductCard(
             productCardDto = productCardDto,
-            isFavorite = false,
             onFavoriteClick = { /* TODO: handle click */ },
             onProductClick = {}
         )
@@ -198,13 +197,13 @@ fun PreviewProductCardDarkTheme() {
         discountedPrice = 8000000.0,
         discountType = "Percentage",
         discountValue = 10.0,
-        averageRating = 1.0
+        averageRating = 1.0,
+        isFavorite = true
     )
 
     ElectroShopAndroidTheme(darkTheme = true) {
         ProductCard(
             productCardDto = productCardDto,
-            isFavorite = false,
             onFavoriteClick = { /* TODO: handle click */ },
             onProductClick = {}
         )

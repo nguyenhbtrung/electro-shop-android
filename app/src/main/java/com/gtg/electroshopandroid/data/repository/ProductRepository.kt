@@ -8,6 +8,7 @@ interface ProductRepository {
     suspend fun getProductById(id: Int): ProductDto
     suspend fun getDiscountedProducts(): List<ProductCardDto>
     suspend fun getBestSellerProducts(): List<ProductCardDto>
+    suspend fun getProductsSearch(productName: String):List<ProductCardDto>
 }
 
 class ProductRepositoryImpl(
@@ -24,5 +25,8 @@ class ProductRepositoryImpl(
 
     override suspend fun getBestSellerProducts(): List<ProductCardDto> {
         return productApiService.getBestSellerProducts()
+    }
+    override suspend fun getProductsSearch(productName: String): List<ProductCardDto> {
+        return productApiService.getProductsSearch(productName)
     }
 }

@@ -26,6 +26,6 @@ fun initLoadingBanners() : List<BannerDto> {
 
 fun initLoadingProducts() : List<ProductCardDto> {
     return List(10){ index ->
-        ProductCardDto(index + 1, "", listOf(""), 0.0, 0.0, "", 0.0, 0.0)
+        ProductCardDto(index + 1, "", listOf(""), 0.0, 0.0, "", 0.0, 0.0, false)
     }
 }
