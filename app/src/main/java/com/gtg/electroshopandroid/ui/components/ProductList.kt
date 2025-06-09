@@ -39,7 +39,6 @@ fun HorizontalScrollingProductList(
             items(productCardDtoList) { dto ->
                 ProductCard(
                     productCardDto = dto,
-                    isFavorite = false,
                     onFavoriteClick = {},
                     onProductClick = { navController.navigate("products/${dto.productId}")}
                 )

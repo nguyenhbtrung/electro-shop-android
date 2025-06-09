@@ -567,11 +567,11 @@ fun RecommendedProductsSection(recommendations: List<RecommendDto>,navController
                     discountedPrice = recommendDto.discountedPrice,
                     discountType = recommendDto.discountType,
                     discountValue = recommendDto.discountValue,
-                    averageRating =  String.format("%.1f", recommendDto.averageRating ?: 0.0).toDouble()
+                    averageRating = String.format(Locale.US, "%.1f", recommendDto.averageRating ?: 0.0).toDouble(),
+                    isFavorite = false
                 )
                 ProductCard(
                     productCardDto = productCardDto,
-                    isFavorite = false,
                     onFavoriteClick = { /* TODO */ },
                     modifier = Modifier.width(180.dp),
                     onProductClick = {navController.navigate("products/${productCardDto.productId}")}

@@ -11,5 +11,6 @@ data class ProductCardDto(
     val discountedPrice: Double,
     val discountType: String,
     val discountValue: Double,
-    val averageRating: Double
+    val averageRating: Double,
+    val isFavorite: Boolean
 )

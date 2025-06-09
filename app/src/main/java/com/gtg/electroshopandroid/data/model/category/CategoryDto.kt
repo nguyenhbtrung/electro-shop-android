@@ -24,4 +24,5 @@ data class CategoryProductDto(
     val discountValue: Double,
     val averageRating: Double,
     val images: List<String>,
+    val isFavorite: Boolean
 )
