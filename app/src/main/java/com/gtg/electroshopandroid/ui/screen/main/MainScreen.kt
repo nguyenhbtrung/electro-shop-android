@@ -26,7 +26,8 @@ import com.gtg.electroshopandroid.ui.components.TopBarMain
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
-    val mainViewModel: MainViewModel = viewModel()
+    val mainViewModel: MainViewModel =
+        viewModel(factory = MainViewModel.Factory)
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showSheet by remember { mutableStateOf(false) }
@@ -41,6 +42,7 @@ fun MainScreen(navController: NavHostController) {
                 onDismiss = { showSheet = false },
                 onParentCategoryClick = mainViewModel::setSelectedCategoryParent,
                 onChildCategoryClick = mainViewModel::setSelectedCategoryChild,
+                categories = mainViewModel.uiState.categories,
                 selectedCategoryParentId = mainViewModel.uiState.selectedCategoryParentId,
                 selectedCategoryChildId = mainViewModel.uiState.selectedCategoryChildId,
             )

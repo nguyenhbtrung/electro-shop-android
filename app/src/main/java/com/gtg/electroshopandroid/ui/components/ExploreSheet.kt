@@ -144,6 +144,7 @@ fun ExploreSheetContent(
     onDismiss: () -> Unit,
     onParentCategoryClick: (Int) -> Unit,
     onChildCategoryClick: (Int) -> Unit,
+    categories: List<CategoryTreeDto>,
     selectedCategoryParentId: Int,
     selectedCategoryChildId: Int
 ) {
