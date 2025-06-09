@@ -141,7 +141,7 @@ fun CategoryProductDto.toProductCardDto(): ProductCardDto  {
         name = this.name,
         originalPrice = this.originalPrice,
         discountedPrice = this.discountedPrice,
-        averageRating = this.averageRating,
+        averageRating =  String.format("%.1f", this.averageRating ?: 0.0).toDouble(),
         images =  this.images.map { convertBaseUrl(it) },
         discountType = this.discountType,
         discountValue = this.discountValue,
@@ -227,9 +227,9 @@ fun FilterSection(
                                 OutlinedButton(
                                     onClick = {
                                         if (isSelected) {
-                                            onRatingSelected("") // Bỏ chọn nếu đã chọn
+                                            onRatingSelected("")
                                         } else {
-                                            onRatingSelected(option) // Chọn option mới
+                                            onRatingSelected(option)
                                         }
                                     },
                                     border = if (isSelected) BorderStroke(2.dp, Color(0xFFFFC107)) else null,
@@ -290,7 +290,6 @@ fun FilterSection(
 }
 
 
-// ComboBox (DropdownMenu) đơn giản
 @Composable
 fun ComboBox(
     options: List<String>,
