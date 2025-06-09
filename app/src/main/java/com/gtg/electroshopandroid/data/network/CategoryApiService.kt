@@ -1,7 +1,5 @@
 package com.gtg.electroshopandroid.data.network
 
-import com.gtg.electroshopandroid.data.model.category.CategoryDto
-import com.gtg.electroshopandroid.data.model.ProductDto
 import com.gtg.electroshopandroid.data.model.category.CategoryProductDto
 import retrofit2.http.GET;
 import retrofit2.http.Path
@@ -16,8 +14,8 @@ interface CategoryApiService {
     @GET("api/Filter/category")
     suspend fun filterProductsByCategory(
         @Query("categoryId") categoryId: Int,
-        @Query("priceFilter") priceFilter: Int,
-        @Query("brandId") brandId: Int,
-        @Query("ratingFilter") ratingFilter: Int
+        @Query("priceFilter") priceFilter: Int?,
+        @Query("brandId") brandId: Int?,
+        @Query("ratingFilter") ratingFilter: Int?
     ): List<CategoryProductDto>
 }

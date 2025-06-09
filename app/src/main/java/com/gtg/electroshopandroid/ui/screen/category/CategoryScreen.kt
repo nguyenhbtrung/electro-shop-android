@@ -1,3 +1,4 @@
+package com.gtg.electroshopandroid.ui.screen.category
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -13,16 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gtg.electroshopandroid.convertBaseUrl
-import com.gtg.electroshopandroid.data.model.ProductDto
 import com.gtg.electroshopandroid.data.model.category.CategoryProductDto
 import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 import com.gtg.electroshopandroid.ui.components.ProductCard
-import com.gtg.electroshopandroid.ui.screen.category.CategoryViewModel
-import com.gtg.electroshopandroid.ui.screen.category.ProductByCategoryUiState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -40,8 +39,33 @@ fun CategoryScreen(
 
     val uiState = viewModel.productByCategoryUiState
     var selectedPrice by remember { mutableStateOf("Tất cả") }
+    val priceMap = mapOf(
+        "Tất cả" to null,
+        "Dưới 5tr" to 0,
+        "5tr - 10tr" to 1,
+        "10tr - 15tr" to 2,
+        "15tr - 20tr" to 3,
+        "Trên 20tr" to 4
+    )
     var selectedBrand by remember { mutableStateOf("Tất cả") }
-    var selectedRating by remember { mutableStateOf("Tất cả") }
+    val brandMap = mapOf(
+        "Asus" to 2,
+        "Samsung" to 4,
+        "Apple" to 1005,
+        "Sony" to 1006,
+        "Dell" to 1007,
+        "Hp" to 1008,
+        "Acer" to 1010,
+        "Tất cả" to null
+    )
+    var selectedRating by remember { mutableStateOf("0-5") }
+    val ratingMap = mapOf(
+        "0-1" to 0,
+        "0-2" to 1,
+        "2-3" to 2,
+        "3-4" to 3,
+        "4-5" to 4
+    )
     var page by remember { mutableStateOf(0) }
     val pageSize = 14
 
@@ -73,7 +97,15 @@ fun CategoryScreen(
                     onBrandSelected = { selectedBrand = it; page = 0 },
                     selectedRating = selectedRating,
                     onRatingSelected = { selectedRating = it; page = 0 },
-                    brandList = listOf("Tất cả", "Samsung", "Apple")
+                    onApplyFilter = {
+                        page = 0
+                        viewModel.getFilteredProducts(
+                            categoryId = categoryId,
+                            price = priceMap[selectedPrice],
+                            brandId = brandMap[selectedBrand],
+                            rating = ratingMap[selectedRating]
+                        )
+                    },
                 )
 
 
@@ -136,12 +168,16 @@ fun FilterSection(
     onRatingSelected: (String) -> Unit,
     selectedBrand: String,
     onBrandSelected: (String) -> Unit,
-    brandList: List<String> = listOf("Tất cả"),
+    onApplyFilter: () -> Unit
 ) {
+
     val priceOptions = listOf(
         "Tất cả", "Dưới 5tr", "5tr - 10tr", "10tr - 15tr", "15tr - 20tr", "Trên 20tr"
     )
-    val ratingOptions = listOf("0-1", "0-2", "2-3", "3-4", "4-5")
+
+    val ratingOptions = listOf("0-1", "1-2", "2-3", "3-4", "4-5")
+
+    val brandList = listOf("Tất cả", "Asus", "Samsung", "Apple", "Sony", "Dell", "Hp", "Acer")
 
     Column(
         modifier = Modifier
@@ -149,7 +185,7 @@ fun FilterSection(
             .background(Color(0xFFF1F1F1))
             .padding(8.dp)
     ) {
-        // Header
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -220,6 +256,17 @@ fun FilterSection(
                 onOptionSelected = onBrandSelected
             )
         }
+        Button(
+            onClick = onApplyFilter,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            Icon(Icons.Default.FilterList, contentDescription = "Lọc")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Áp dụng bộ lọc")
+        }
+
     }
 }
 

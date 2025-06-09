@@ -15,7 +15,6 @@ import retrofit2.HttpException
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.gtg.electroshopandroid.data.model.category.CategoryDto
-import com.gtg.electroshopandroid.data.model.ProductDto
 import com.gtg.electroshopandroid.data.model.category.CategoryProductDto
 import com.gtg.electroshopandroid.data.repository.CategoryRepository
 
@@ -38,11 +37,11 @@ class CategoryViewModel(
         private set
     var errorMessage: String? by mutableStateOf(null)
         private set
-    fun getFilteredProducts(categoryId: Int, priceFilter: Int, brandId: Int, ratingFilter: Int) {
+    fun getFilteredProducts(categoryId: Int, price: Int?, brandId: Int?, rating: Int?) {
         viewModelScope.launch {
             productByCategoryUiState = ProductByCategoryUiState.Loading
             try {
-                val result = categoryRepository.filterProductsByCategory(categoryId, priceFilter, brandId, ratingFilter)
+                val result = categoryRepository.filterProductsByCategory(categoryId, price, brandId, rating)
                 productByCategoryUiState = ProductByCategoryUiState.Success(result)
             } catch (e: Exception) {
                 errorMessage = "Error: ${e.message}"
