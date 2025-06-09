@@ -567,7 +567,7 @@ fun RecommendedProductsSection(recommendations: List<RecommendDto>,navController
                     discountedPrice = recommendDto.discountedPrice,
                     discountType = recommendDto.discountType,
                     discountValue = recommendDto.discountValue,
-                    averageRating = recommendDto.averageRating
+                    averageRating =  String.format("%.1f", recommendDto.averageRating ?: 0.0).toDouble()
                 )
                 ProductCard(
                     productCardDto = productCardDto,

@@ -143,7 +143,7 @@ val categories = listOf(
 fun ExploreSheetContent(
     onDismiss: () -> Unit,
     onParentCategoryClick: (Int) -> Unit,
-    onChildCategoryClick: (Int) -> Unit,
+    onChildCategoryClick: (Int, String) -> Unit,
     categories: List<CategoryTreeDto>,
     selectedCategoryParentId: Int,
     selectedCategoryChildId: Int
@@ -211,7 +211,7 @@ fun ExploreSheetContent(
         ) {
             categoryChilds.forEach { cat ->
                 OutlinedButton(
-                    onClick = { onChildCategoryClick(cat.categoryId) },
+                    onClick = { onChildCategoryClick(cat.categoryId, cat.name) },
                     colors = if (selectedCategoryChildId == cat.categoryId)
                         ButtonDefaults.outlinedButtonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
