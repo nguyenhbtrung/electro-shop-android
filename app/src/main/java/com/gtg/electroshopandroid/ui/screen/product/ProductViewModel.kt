@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 import com.gtg.electroshopandroid.data.model.product.RecommendDto
 import com.gtg.electroshopandroid.data.repository.RecommendRepository
 import kotlin.math.log
@@ -30,6 +31,11 @@ sealed interface RecommendUiState {
     data class Success(val recommendations: List<RecommendDto>) : RecommendUiState
     object Error : RecommendUiState
 }
+sealed interface SearchUiState {
+    object Loading : SearchUiState
+    data class Success(val results: List<ProductCardDto>) : SearchUiState
+    object Error : SearchUiState
+}
 
 class ProductViewModel(
     private val productRepository: ProductRepository
@@ -37,7 +43,8 @@ class ProductViewModel(
 
     var productUiState: ProductUiState by mutableStateOf(ProductUiState.Loading)
         private set
-
+    var searchUiState: SearchUiState by mutableStateOf(SearchUiState.Loading)
+        private set
     fun getProductById(id: Int) {
         viewModelScope.launch {
             productUiState = ProductUiState.Loading
@@ -57,7 +64,22 @@ class ProductViewModel(
             }
         }
     }
-
+    fun searchProductsByName(productName: String) {
+        viewModelScope.launch {
+            searchUiState = SearchUiState.Loading
+            try {
+                val result = productRepository.getProductsSearch(productName)
+                searchUiState = SearchUiState.Success(result)
+            } catch (e: IOException) {
+                searchUiState = SearchUiState.Error
+            } catch (e: HttpException) {
+                searchUiState = SearchUiState.Error
+            } catch (e: Exception) {
+                Log.e("SearchError", e.message ?: "")
+                searchUiState = SearchUiState.Error
+            }
+        }
+    }
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
