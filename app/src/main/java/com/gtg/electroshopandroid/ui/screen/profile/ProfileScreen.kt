@@ -155,7 +155,6 @@ fun ProfileScreen(navController: NavHostController) {
     val categories = listOf(
         Triple("Hồ sơ cá nhân", Icons.Default.Person, Screen.ProfileDetail.route),
         Triple("Đơn hàng của bạn", Icons.Default.AddShoppingCart, Screen.OrderHistory.route),
-        Triple("Lịch sử duyệt sản phẩm", Icons.Default.History, Screen.BrowsingHistory.route),
         Triple("Cài đặt", Icons.Default.Settings, Screen.Settings.route),
         Triple("Lịch sử hoàn trả", Icons.Default.Replay, Screen.ReturnHistory.route),
         Triple("Hỗ trợ khách hàng", Icons.Default.SupportAgent, Screen.Support.route),
