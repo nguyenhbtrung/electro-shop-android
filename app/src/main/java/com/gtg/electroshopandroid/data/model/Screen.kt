@@ -19,11 +19,10 @@ sealed class Screen(val route: String, val icon: ImageVector?, @StringRes val la
 
     data object Product : Screen("products/{id}", null, R.string.product_detail)
     data object Category : Screen("categories/{id}/{name}", null, R.string.categories)
+    data object Brand : Screen("brand/{id}/{name}", null, R.string.brand)
     data object Messages : Screen("messages", null, R.string.msg)
     data object Notifications: Screen("notifications", null, R.string.notifications)
-    data object Search: Screen("search",null,R.string.search)
     data object OrderHistory: Screen("orderHistory", null, R.string.order_history)
-
     data object Login : Screen("login", null, R.string.login)
     data object Signup : Screen("signup", null, R.string.signup)
 

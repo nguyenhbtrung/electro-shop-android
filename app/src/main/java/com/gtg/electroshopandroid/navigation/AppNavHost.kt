@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.navigation
 
+import BrandScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -82,6 +83,10 @@ fun AppNavHost(navController: NavHostController) {
                     val encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString())
                     navController.navigate("categories/$id/$encodedName")
                 },
+                onBrandClick = { id, name ->
+                    val encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString())
+                    navController.navigate("brand/$id/$encodedName")
+                },
                 onBack = { navController.popBackStack() },
                 navController = navController
             )
@@ -102,7 +107,21 @@ fun AppNavHost(navController: NavHostController) {
                 onProductClick = { navController.navigate("products/$it")}
             )
         }
-
+        composable(
+            route = Screen.Brand.route,
+            arguments = listOf(navArgument("id") {type = NavType.IntType},
+                navArgument("name") { type = NavType.StringType})
+        ) { backStackEntry ->
+            val brandId = backStackEntry.arguments?.getInt("id") ?: return@composable
+            val rawName = backStackEntry.arguments?.getString("name") ?: ""
+            val brandName = URLDecoder.decode(rawName, "UTF-8")
+            BrandScreen(
+                brandId = brandId,
+                brandName = brandName,
+                onBack = { navController.popBackStack() },
+                onProductClick = { navController.navigate("products/$it")}
+            )
+        }
         composable(
             route = "search_results/{query}",
             arguments = listOf(navArgument("query") { type = NavType.StringType })

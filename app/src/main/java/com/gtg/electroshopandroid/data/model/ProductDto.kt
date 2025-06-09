@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.data.model
 
+import com.gtg.electroshopandroid.data.model.brand.BrandDto
 import com.gtg.electroshopandroid.data.model.category.CategoryDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -45,16 +46,4 @@ data class ProductImageDto(
 )
 
 
-@Serializable
-data class BrandDto(
-    @SerialName("brandId")
-    val brandId: Int,
-    @SerialName("brandName")
-    val brandName: String,
-    @SerialName("country")
-    val country: String,
-    @SerialName("imageUrl")
-    val imageUrl: String,
-    @SerialName("info")
-    val info: String
-)
+

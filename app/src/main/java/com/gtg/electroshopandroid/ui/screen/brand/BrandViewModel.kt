@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.gtg.electroshopandroid.ElectroShopApplication
+import com.gtg.electroshopandroid.data.model.brand.BrandDto
 import com.gtg.electroshopandroid.data.model.brand.BrandProductDto
 import com.gtg.electroshopandroid.data.repository.BrandRepository
 import kotlinx.coroutines.launch
@@ -21,10 +22,17 @@ sealed interface ProductByBrandUiState {
     data class Success(val products: List<BrandProductDto>) : ProductByBrandUiState
     object Error : ProductByBrandUiState
 }
+sealed interface BrandUiState {
+    object Loading : BrandUiState
+    data class Success(val brands: List<BrandDto>) : BrandUiState
+    data class Error(val message: String) : BrandUiState
+}
 class BrandViewModel (
     private val brandRepository: BrandRepository
 ) : ViewModel(){
     var productByBrandUiState: ProductByBrandUiState by mutableStateOf(ProductByBrandUiState.Loading)
+        private set
+    var brandUiState: BrandUiState by mutableStateOf(BrandUiState.Loading)
         private set
     var errorMessage: String? by mutableStateOf(null)
         private set
@@ -55,6 +63,17 @@ class BrandViewModel (
             } catch (e: Exception) {
                 errorMessage = "Error: ${e.message}"
                 productByBrandUiState = ProductByBrandUiState.Error
+            }
+        }
+    }
+    fun getBrands() {
+        viewModelScope.launch {
+            brandUiState = BrandUiState.Loading
+            try {
+                val result = brandRepository.getBrand()
+                brandUiState = BrandUiState.Success(result)
+            } catch (e: Exception) {
+                brandUiState = BrandUiState.Error("Lỗi: ${e.message}")
             }
         }
     }

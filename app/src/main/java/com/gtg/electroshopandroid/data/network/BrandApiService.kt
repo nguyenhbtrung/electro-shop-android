@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.data.network
 
+import com.gtg.electroshopandroid.data.model.brand.BrandDto
 import com.gtg.electroshopandroid.data.model.brand.BrandProductDto
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -18,4 +19,8 @@ interface BrandApiService {
     suspend fun getProductbyBrandId(
         @Path("id") brandId: Int
     ): List<BrandProductDto>
+
+    @GET("api/Brand")
+    suspend fun getBrand(
+    ): List<BrandDto>
 }

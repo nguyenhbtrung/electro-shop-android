@@ -61,6 +61,7 @@ fun formatPrice(price: Double): String {
 fun ProductScreen(
     productId: Int,
     onCategoryClick: (Int,String) -> Unit,
+    onBrandClick: (Int,String) -> Unit,
     navController: NavController,
     onBack: () -> Unit = {},
 ) {
@@ -166,7 +167,8 @@ fun ProductScreen(
 
                             ProductTabs(
                                 product = product,
-                                onCategoryClick = onCategoryClick
+                                onCategoryClick = onCategoryClick,
+                                onBrandClick= onBrandClick,
                             )
                             RatingSection(
                                 productId = productId
@@ -319,7 +321,8 @@ fun PagerIndicator(
 @Composable
 fun ProductTabs(
     product: ProductDto,
-    onCategoryClick: (Int,String) -> Unit
+    onCategoryClick: (Int,String) -> Unit,
+    onBrandClick: (Int,String) -> Unit,
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Mô tả sản phẩm", "Chính sách bán hàng")
@@ -393,6 +396,37 @@ fun ProductTabs(
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Thương hiệu của sản phẩm:",
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) { product.brand?.let { brand ->
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = brand.brandName,
+                        color = Color(0xFF2196F3),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable {
+                                onBrandClick(brand.brandId, brand.brandName)
+                            }
+                            .background(Color(0xFFE3F2FD))
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }}
+
         }
     } else {
         Box(
