@@ -98,6 +98,7 @@ fun AppNavHost(navController: NavHostController) {
             CategoryScreen(
                 categoryId = categoryId,
                 categoryName = categoryName,
+                onBack = { navController.popBackStack() },
                 onProductClick = { navController.navigate("products/$it")}
             )
         }

@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import java.util.Locale
@@ -40,6 +41,7 @@ fun CategoryScreen(
     categoryId: Int,
     onProductClick: (Int) -> Unit,
     categoryName: String,
+    onBack: () -> Unit = {},
     viewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory),
 ) {
     LaunchedEffect(categoryId) {
@@ -94,6 +96,18 @@ fun CategoryScreen(
 
             val pagedProducts = products.drop(page * pageSize).take(pageSize)
             Column(modifier = Modifier.fillMaxSize()) {
+                androidx.compose.material3.IconButton(
+                    onClick = onBack,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Start)
+                ) {
+                    androidx.compose.material3.Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
+                        contentDescription = "Quay lại",
+                        tint = Color.Black
+                    )
+                }
                 Text(
                     text = "Danh Mục Sản Phẩm: $categoryName",
                     style = TextStyle(fontSize = 20.sp),

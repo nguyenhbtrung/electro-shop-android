@@ -43,6 +43,7 @@ fun SearchResultsScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
             androidx.compose.material3.IconButton(
                 onClick = onBack,
                 modifier = Modifier
