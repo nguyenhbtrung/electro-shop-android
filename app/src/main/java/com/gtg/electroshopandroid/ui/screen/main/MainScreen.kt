@@ -41,7 +41,10 @@ fun MainScreen(navController: NavHostController) {
             ExploreSheetContent(
                 onDismiss = { showSheet = false },
                 onParentCategoryClick = mainViewModel::setSelectedCategoryParent,
-                onChildCategoryClick = mainViewModel::setSelectedCategoryChild,
+                onChildCategoryClick = {
+                    mainViewModel.setSelectedCategoryChild(it)
+                    navController.navigate("categories/$it")
+                },
                 categories = mainViewModel.uiState.categories,
                 selectedCategoryParentId = mainViewModel.uiState.selectedCategoryParentId,
                 selectedCategoryChildId = mainViewModel.uiState.selectedCategoryChildId,

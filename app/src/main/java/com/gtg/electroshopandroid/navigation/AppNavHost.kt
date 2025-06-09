@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
 import com.gtg.electroshopandroid.ElectroShopApplication
+import com.gtg.electroshopandroid.ui.screen.category.CategoryScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryViewModel
 
 @Composable
@@ -70,8 +71,20 @@ fun AppNavHost(navController: NavHostController) {
             val productId = backStackEntry.arguments?.getInt("id") ?: return@composable
             ProductScreen(
                 productId = productId,
+                onCategoryClick = { navController.navigate("categories/$it") },
                 onBack = { navController.popBackStack() },
                 navController = navController
+            )
+        }
+
+        composable(
+            route = Screen.Category.route,
+            arguments = listOf(navArgument("id") {type = NavType.IntType})
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("id") ?: return@composable
+            CategoryScreen(
+                categoryId = categoryId,
+                onProductClick = { navController.navigate("products/$it")}
             )
         }
 

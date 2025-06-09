@@ -54,6 +54,7 @@ fun ProductCard(
     onProductClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val imageUrl = if (productCardDto.images.size > 0) productCardDto.images[0] else ""
     Card(
         onClick = onProductClick,
         shape = RoundedCornerShape(16.dp),
@@ -69,7 +70,7 @@ fun ProductCard(
             Column(modifier = Modifier.fillMaxWidth()) {
                 // Product Image
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current).data(convertBaseUrl(productCardDto.images[0]))
+                    model = ImageRequest.Builder(context = LocalContext.current).data(convertBaseUrl(imageUrl))
                         .crossfade(true).build(),
                     error = painterResource(R.drawable.ic_broken_image),
                     placeholder = painterResource(R.drawable.loading_img),

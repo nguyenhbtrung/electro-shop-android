@@ -35,6 +35,7 @@ import androidx.compose.foundation.clickable
 @Composable
 fun CategoryScreen(
     categoryId: Int,
+    onProductClick: (Int) -> Unit,
     viewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory),
 ) {
     LaunchedEffect(categoryId) {
@@ -123,7 +124,7 @@ fun CategoryScreen(
                             productCardDto = product.toProductCardDto(),
                             isFavorite = false,
                             onFavoriteClick = { /* TODO */ },
-                            onProductClick = {  }
+                            onProductClick = { onProductClick(product.productId) }
                         )
                     }
                 }

@@ -58,7 +58,12 @@ fun formatPrice(price: Double): String {
     return formatter.format(price)
 }
 @Composable
-fun ProductScreen(productId: Int, onBack: () -> Unit = {},navController: NavController) {
+fun ProductScreen(
+    productId: Int,
+    onCategoryClick: (Int) -> Unit,
+    navController: NavController,
+    onBack: () -> Unit = {},
+) {
     val viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory)
     val productUiState = viewModel.productUiState
     val recommendViewModel: RecommendViewModel = viewModel(factory = RecommendViewModel.Factory)
@@ -159,8 +164,13 @@ fun ProductScreen(productId: Int, onBack: () -> Unit = {},navController: NavCont
                                 )
                             }
 
-                            ProductTabs(product = product)
-                            RatingSection(productId = productId)
+                            ProductTabs(
+                                product = product,
+                                onCategoryClick = onCategoryClick
+                            )
+                            RatingSection(
+                                productId = productId
+                            )
 
                             // Thêm phần sản phẩm tương tự khi recommendUiState thành công
                             when (recommendUiState) {
@@ -308,7 +318,10 @@ fun PagerIndicator(
     }
 }
 @Composable
-fun ProductTabs(product: ProductDto) {
+fun ProductTabs(
+    product: ProductDto,
+    onCategoryClick: (Int) -> Unit
+) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Mô tả sản phẩm", "Chính sách bán hàng")
     Box(
@@ -374,7 +387,7 @@ fun ProductTabs(product: ProductDto) {
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .clickable {
-                                // TODO
+                                onCategoryClick(category.categoryId)
                             }
                             .background(Color(0xFFE3F2FD))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
