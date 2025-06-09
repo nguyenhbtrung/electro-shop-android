@@ -37,6 +37,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -50,8 +52,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.R
 import com.gtg.electroshopandroid.data.model.Screen
 import com.gtg.electroshopandroid.preferences.TokenPreferences
@@ -139,6 +143,15 @@ fun CategoryItem2(
 
 @Composable
 fun ProfileScreen(navController: NavHostController) {
+    val viewModel: ProfileDetailViewModel = viewModel(factory = ProfileDetailViewModel.Factory)
+    LaunchedEffect(Unit) {
+        viewModel.loadProfile()
+    }
+
+    val fullName by viewModel.fullName
+    val email by viewModel.email
+    val avatarUrl by viewModel.avatarImg
+
     val categories = listOf(
         Triple("Hồ sơ cá nhân", Icons.Default.Person, Screen.ProfileDetail.route),
         Triple("Đơn hàng của bạn", Icons.Default.AddShoppingCart, Screen.OrderHistory.route),
@@ -150,7 +163,6 @@ fun ProfileScreen(navController: NavHostController) {
     )
     val categories2 = listOf(
         "Đăng xuất" to Icons.AutoMirrored.Filled.ExitToApp,
-        "Xóa tài khoản" to Icons.Default.Delete
     )
 
     val context = LocalContext.current
@@ -165,30 +177,30 @@ fun ProfileScreen(navController: NavHostController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Logo",
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = "Avatar",
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(100.dp)
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "J1ckay",
+                text = fullName,
                 textAlign = TextAlign.Center,
                 fontSize = 24.sp,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = "huydangdo2003@gmail.com",
+                text = email,
                 color = Color.Gray,
             )
             Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp)) // bo tròn
-                    .background(Color(0xFFBDBDBD)) // màu khác với background
+                    .background(Color.White) // màu khác với background
             ) {
                 categories.forEachIndexed { index, (title, icon, route) ->
                     val topPadding = if (index == 0) 8.dp else 0.dp
@@ -208,7 +220,7 @@ fun ProfileScreen(navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp)) // bo tròn
-                    .background(Color(0xFFBDBDBD)) // màu khác với background
+                    .background(Color.White) // màu khác với bazckground
             ) {
                 categories2.forEachIndexed { index, (title, icon) ->
                     val topPadding = if (index == 0) 8.dp else 0.dp

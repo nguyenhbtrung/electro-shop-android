@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.gtg.electroshopandroid.R
 import com.gtg.electroshopandroid.data.repository.ProfileRepository
 import com.gtg.electroshopandroid.ui.screen.product.ProductViewModel
@@ -61,6 +62,7 @@ fun ProfileDetailScreen(
     val fullName by viewModel.fullName
     val phoneNumber by viewModel.phoneNumber
     val address by viewModel.address
+    val avatarUrl by viewModel.avatarImg
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -100,9 +102,9 @@ fun ProfileDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(5.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "Logo",
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = "Avatar",
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(100.dp)
