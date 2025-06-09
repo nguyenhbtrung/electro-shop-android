@@ -6,6 +6,12 @@ import kotlinx.serialization.Serializable
 data class FavoriteProductDTO(
     val productId: Int,
     val name: String,
-    val price: Double,
+    val originalPrice: Double,
+    val discountedPrice: Double,
     val imageUrl: String
+)
+
+@Serializable
+data class ToggleFavoriteResponse(
+    val status: String // "Added" hoặc "Removed"
 )

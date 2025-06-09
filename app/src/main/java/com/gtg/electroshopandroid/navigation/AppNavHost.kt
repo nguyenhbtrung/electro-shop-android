@@ -60,7 +60,7 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(Screen.Home.route)     { HomeScreen(navController = navController) }
         composable(Screen.Cart.route)     { CartScreen() }
-        composable(Screen.Favorites.route){ FavoritesScreen() }
+        composable(Screen.Favorites.route){ FavoritesScreen(navController = navController) }
         composable(Screen.Profile.route)  { ProfileScreen(navController) }
 
         composable(
