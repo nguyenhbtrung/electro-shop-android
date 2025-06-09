@@ -133,6 +133,7 @@ fun AppNavHost(navController: NavHostController) {
             val orderId = backStackEntry.arguments?.getInt("orderId")
             OrderDetailScreen(
                 orderId = orderId,
+                navController = navController,
                 onBack = { navController.popBackStack() }
             )
         }
