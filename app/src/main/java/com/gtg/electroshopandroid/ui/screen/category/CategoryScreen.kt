@@ -24,9 +24,13 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 
 @Composable
 fun CategoryScreen(
@@ -170,105 +174,125 @@ fun FilterSection(
     onBrandSelected: (String) -> Unit,
     onApplyFilter: () -> Unit
 ) {
+    var expanded by remember { mutableStateOf(false) }
 
-    val priceOptions = listOf(
-        "Tất cả", "Dưới 5tr", "5tr - 10tr", "10tr - 15tr", "15tr - 20tr", "Trên 20tr"
-    )
-
-    val ratingOptions = listOf("0-1", "1-2", "2-3", "3-4", "4-5")
-
-    val brandList = listOf("Tất cả", "Asus", "Samsung", "Apple", "Sony", "Dell", "Hp", "Acer")
-
-    Column(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF1F1F1))
-            .padding(8.dp)
+            .padding(8.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 8.dp)
-        ) {
-            Icon(Icons.Default.Menu, contentDescription = "Menu")
-            Spacer(Modifier.width(8.dp))
-            Text("Bộ lọc", fontWeight = FontWeight.Bold)
-        }
-
-        // Giá tiền
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            Text("Giá tiền:", modifier = Modifier.weight(1f))
-            ComboBox(
-                options = priceOptions,
-                selectedOption = selectedPrice,
-                onOptionSelected = onPriceSelected
-            )
-        }
-
-        Divider()
-
-        // Đánh giá
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            Text("Đánh giá:", modifier = Modifier.weight(1f))
-            ratingOptions.forEach { option ->
-                val isSelected = selectedRating == option
-                OutlinedButton(
-                    onClick = { onRatingSelected(option) },
-                    border = if (isSelected) BorderStroke(2.dp, Color(0xFFFFC107)) else null,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = if (isSelected) Color(0xFFFFF8E1) else Color.White
-                    ),
-                    modifier = Modifier
-                        .padding(horizontal = 2.dp)
-                        .height(36.dp)
-                ) {
-                    Text(option)
-                }
-            }
-            // Icon ngôi sao cho mức cao nhất
-            if (selectedRating == "4-5") {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Best Rating",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(24.dp).padding(start = 4.dp)
-                )
-            }
-        }
-
-        Divider()
-
-        // Nhãn hàng
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            Text("Nhãn hàng:", modifier = Modifier.weight(1f))
-            ComboBox(
-                options = brandList,
-                selectedOption = selectedBrand,
-                onOptionSelected = onBrandSelected
-            )
-        }
-        Button(
-            onClick = onApplyFilter,
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
+                .background(Color(0xFFF9F9F9))
+                .padding(8.dp)
         ) {
-            Icon(Icons.Default.FilterList, contentDescription = "Lọc")
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Áp dụng bộ lọc")
-        }
+            // Tiêu đề + Icon Toggle
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded } // Toggle filter visibility
+                    .padding(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Menu"
+                )
+                Spacer(Modifier.width(8.dp))
+                Text("Bộ lọc", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Toggle",
+                    tint = Color.Gray
+                )
+            }
 
+            // Nội dung lọc (ẩn/hiện)
+            AnimatedVisibility(visible = expanded) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+
+                    // Giá tiền
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        Text("Giá tiền:", modifier = Modifier.weight(1f))
+                        ComboBox(
+                            options = listOf("Tất cả", "Dưới 5tr", "5tr - 10tr", "10tr - 15tr", "15tr - 20tr", "Trên 20tr"),
+                            selectedOption = selectedPrice,
+                            onOptionSelected = onPriceSelected
+                        )
+                    }
+
+                    Divider()
+
+                    // Đánh giá
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        Text("Đánh giá:", modifier = Modifier.weight(1f))
+                        listOf("0-1", "1-2", "2-3", "3-4", "4-5").forEach { option ->
+                            val isSelected = selectedRating == option
+                            OutlinedButton(
+                                onClick = { onRatingSelected(option) },
+                                border = if (isSelected) BorderStroke(2.dp, Color(0xFFFFC107)) else null,
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = if (isSelected) Color(0xFFFFF8E1) else Color.White
+                                ),
+                                modifier = Modifier
+                                    .padding(horizontal = 2.dp)
+                                    .height(36.dp)
+                            ) {
+                                Text(option)
+                            }
+                        }
+                        if (selectedRating == "4-5") {
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "Best Rating",
+                                tint = Color(0xFFFFC107),
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .padding(start = 4.dp)
+                            )
+                        }
+                    }
+
+                    Divider()
+
+                    // Nhãn hàng
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        Text("Nhãn hàng:", modifier = Modifier.weight(1f))
+                        ComboBox(
+                            options = listOf("Tất cả", "Asus", "Samsung", "Apple", "Sony", "Dell", "Hp", "Acer"),
+                            selectedOption = selectedBrand,
+                            onOptionSelected = onBrandSelected
+                        )
+                    }
+
+                    Button(
+                        onClick = onApplyFilter,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    ) {
+                        Icon(Icons.Default.FilterList, contentDescription = "Lọc")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Áp dụng bộ lọc")
+                    }
+                }
+            }
+        }
     }
 }
+
 
 // ComboBox (DropdownMenu) đơn giản
 @Composable
