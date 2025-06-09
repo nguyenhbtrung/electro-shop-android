@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.ui.screen.order
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.model.OrderDto
 
@@ -21,6 +23,7 @@ import com.gtg.electroshopandroid.data.model.OrderDto
 @Composable
 fun OrderDetailScreen(
     orderId: Int?,
+    navController: NavHostController,
     onBack: () -> Unit = {}
 ) {
     val context = LocalContext.current.applicationContext as ElectroShopApplication
@@ -38,7 +41,6 @@ fun OrderDetailScreen(
     val orderDetail by viewModel.orderDetail.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    // Load dữ liệu khi màn hình được tạo
     LaunchedEffect(orderId) {
         orderId?.let { viewModel.loadOrderDetail(it) }
     }
@@ -67,7 +69,10 @@ fun OrderDetailScreen(
                     )
                 }
                 orderDetail != null -> {
-                    OrderDetailContent(orderDetail = orderDetail!!)
+                    OrderDetailContent(
+                        navController = navController,
+                        orderDetail = orderDetail!!
+                    )
                 }
                 else -> {
                     Text(
@@ -82,7 +87,10 @@ fun OrderDetailScreen(
 }
 
 @Composable
-fun OrderDetailContent(orderDetail: OrderDto) {
+fun OrderDetailContent(
+    orderDetail: OrderDto,
+    navController: NavHostController
+    ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -166,7 +174,9 @@ fun OrderDetailContent(orderDetail: OrderDto) {
                         text = item.productName,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {navController.navigate("products/${item.productId}")
+                        }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
