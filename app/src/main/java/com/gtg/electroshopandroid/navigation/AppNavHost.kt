@@ -162,7 +162,7 @@ fun AppNavHost(navController: NavHostController) {
 
 
         composable(
-            route = Screen.CreateReturn.route, // Thay vì "create_return/{orderId}"
+            route = Screen.CreateReturn.route,
             arguments = listOf(navArgument("orderId") { type = NavType.IntType })
         ) { backStackEntry ->
             val orderId = backStackEntry.arguments?.getInt("orderId") ?: return@composable
