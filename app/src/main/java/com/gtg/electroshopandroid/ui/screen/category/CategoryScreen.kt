@@ -31,11 +31,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun CategoryScreen(
     categoryId: Int,
     onProductClick: (Int) -> Unit,
+    categoryName: String,
     viewModel: CategoryViewModel = viewModel(factory = CategoryViewModel.Factory),
 ) {
     LaunchedEffect(categoryId) {
@@ -91,8 +94,8 @@ fun CategoryScreen(
             val pagedProducts = products.drop(page * pageSize).take(pageSize)
             Column(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = "DANH MỤC SẢN PHẨM",
-                    style = MaterialTheme.typography.headlineMedium,
+                    text = "Danh Mục Sản Phẩm: $categoryName",
+                    style = TextStyle(fontSize = 20.sp),
                     modifier = Modifier.padding(16.dp)
                 )
                 FilterSection(
@@ -126,27 +129,6 @@ fun CategoryScreen(
                             onFavoriteClick = { /* TODO */ },
                             onProductClick = { onProductClick(product.productId) }
                         )
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Button(
-                        onClick = { if (page > 0) page-- },
-                        enabled = page > 0
-                    ) {
-                        Text("Trang trước")
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Button(
-                        onClick = { if ((page + 1) * pageSize < products.size) page++ },
-                        enabled = (page + 1) * pageSize < products.size
-                    ) {
-                        Text("Trang sau")
                     }
                 }
             }
@@ -230,38 +212,51 @@ fun FilterSection(
 
                     Divider()
 
-                    // Đánh giá
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
                     ) {
-                        Text("Đánh giá:", modifier = Modifier.weight(1f))
-                        listOf("0-1", "1-2", "2-3", "3-4", "4-5").forEach { option ->
-                            val isSelected = selectedRating == option
-                            OutlinedButton(
-                                onClick = { onRatingSelected(option) },
-                                border = if (isSelected) BorderStroke(2.dp, Color(0xFFFFC107)) else null,
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = if (isSelected) Color(0xFFFFF8E1) else Color.White
-                                ),
-                                modifier = Modifier
-                                    .padding(horizontal = 2.dp)
-                                    .height(36.dp)
-                            ) {
-                                Text(option)
+                        Text("Đánh giá:", modifier = Modifier.padding(bottom = 4.dp))
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            listOf("0-1", "1-2", "2-3", "3-4", "4-5").forEach { option ->
+                                val isSelected = selectedRating == option
+                                OutlinedButton(
+                                    onClick = {
+                                        if (isSelected) {
+                                            onRatingSelected("") // Bỏ chọn nếu đã chọn
+                                        } else {
+                                            onRatingSelected(option) // Chọn option mới
+                                        }
+                                    },
+                                    border = if (isSelected) BorderStroke(2.dp, Color(0xFFFFC107)) else null,
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = if (isSelected) Color(0xFFFFF8E1) else Color.White
+                                    ),
+                                    modifier = Modifier
+                                        .padding(horizontal = 2.dp)
+                                        .height(36.dp)
+                                ) {
+                                    Text(option)
+                                }
+                            }
+
+                            if (selectedRating == "4-5") {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = "Best Rating",
+                                    tint = Color(0xFFFFC107),
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .padding(start = 4.dp)
+                                )
                             }
                         }
-                        if (selectedRating == "4-5") {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = "Best Rating",
-                                tint = Color(0xFFFFC107),
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .padding(start = 4.dp)
-                            )
-                        }
                     }
+
 
                     Divider()
 

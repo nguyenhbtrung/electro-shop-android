@@ -29,6 +29,9 @@ import androidx.compose.ui.platform.LocalContext
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.ui.screen.category.CategoryScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryViewModel
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -66,12 +69,17 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(
             route = Screen.Product.route,
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
+            arguments = listOf(
+                navArgument("id") { type = NavType.IntType },
+            )
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getInt("id") ?: return@composable
             ProductScreen(
                 productId = productId,
-                onCategoryClick = { navController.navigate("categories/$it") },
+                onCategoryClick = { id, name ->
+                    val encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8.toString())
+                    navController.navigate("categories/$id/$encodedName")
+                },
                 onBack = { navController.popBackStack() },
                 navController = navController
             )
@@ -79,11 +87,15 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(
             route = Screen.Category.route,
-            arguments = listOf(navArgument("id") {type = NavType.IntType})
+            arguments = listOf(navArgument("id") {type = NavType.IntType},
+                navArgument("name") { type = NavType.StringType})
         ) { backStackEntry ->
             val categoryId = backStackEntry.arguments?.getInt("id") ?: return@composable
+            val rawName = backStackEntry.arguments?.getString("name") ?: ""
+            val categoryName = URLDecoder.decode(rawName, "UTF-8")
             CategoryScreen(
                 categoryId = categoryId,
+                categoryName = categoryName,
                 onProductClick = { navController.navigate("products/$it")}
             )
         }

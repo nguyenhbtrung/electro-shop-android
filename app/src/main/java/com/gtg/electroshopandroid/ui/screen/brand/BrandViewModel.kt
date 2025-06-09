@@ -12,9 +12,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.model.brand.BrandProductDto
 import com.gtg.electroshopandroid.data.repository.BrandRepository
-import com.gtg.electroshopandroid.ui.screen.brand.ProductByBrandUiState
-import com.gtg.electroshopandroid.ui.screen.category.CategoryViewModel
-import com.gtg.electroshopandroid.ui.screen.category.ProductByCategoryUiState
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -46,6 +43,18 @@ class BrandViewModel (
             } catch (e: Exception) {
                 errorMessage = "Unexpected error: ${e.message}"
                 ProductByBrandUiState.Error
+            }
+        }
+    }
+    fun getFilteredProducts(brandId: Int, price: Int?, categoryId: Int?, rating: Int?) {
+        viewModelScope.launch {
+            productByBrandUiState = ProductByBrandUiState.Loading
+            try {
+                val result = brandRepository.filterProductsByBrand(brandId, price,categoryId , rating)
+                productByBrandUiState = ProductByBrandUiState.Success(result)
+            } catch (e: Exception) {
+                errorMessage = "Error: ${e.message}"
+                productByBrandUiState = ProductByBrandUiState.Error
             }
         }
     }

@@ -60,7 +60,7 @@ fun formatPrice(price: Double): String {
 @Composable
 fun ProductScreen(
     productId: Int,
-    onCategoryClick: (Int) -> Unit,
+    onCategoryClick: (Int,String) -> Unit,
     navController: NavController,
     onBack: () -> Unit = {},
 ) {
@@ -320,7 +320,7 @@ fun PagerIndicator(
 @Composable
 fun ProductTabs(
     product: ProductDto,
-    onCategoryClick: (Int) -> Unit
+    onCategoryClick: (Int,String) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Mô tả sản phẩm", "Chính sách bán hàng")
@@ -387,7 +387,7 @@ fun ProductTabs(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .clickable {
-                                onCategoryClick(category.categoryId)
+                                onCategoryClick(category.categoryId,category.name)
                             }
                             .background(Color(0xFFE3F2FD))
                             .padding(horizontal = 8.dp, vertical = 4.dp)
