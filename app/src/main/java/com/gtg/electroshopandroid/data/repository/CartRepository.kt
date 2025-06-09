@@ -4,9 +4,10 @@ package com.gtg.electroshopandroid.data.repository
 
 import com.gtg.electroshopandroid.data.model.CartDto
 import com.gtg.electroshopandroid.data.network.CartApiService
-
+import retrofit2.Response
 interface CartRepository {
     suspend fun getCartItems(): List<CartDto>
+    suspend fun deleteCartItem(productId: Int): Response<Unit>
 }
 
 class CartRepositoryImpl(
@@ -15,5 +16,8 @@ class CartRepositoryImpl(
 
     override suspend fun getCartItems(): List<CartDto> {
         return cartApiService.getCartItems()
+    }
+    override suspend fun deleteCartItem(productId: Int): Response<Unit> {
+        return cartApiService.deleteCartItem(productId)
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -92,6 +93,7 @@ fun CartScreen() {
                         val isChecked = checkedMap[cartItem.productId] ?: true
 
                         CartItemCard(
+                            viewModel = viewModel,
                             cart = cartItem,
                             quantity = quantity,
                             onQuantityChange = {
@@ -143,6 +145,7 @@ fun CartHeader() {
 }
 @Composable
 fun CartItemCard(
+    viewModel: CartViewModel,
     cart: CartDto,
     quantity: Int,
     onQuantityChange: (Int) -> Unit,
@@ -166,7 +169,7 @@ fun CartItemCard(
             Box(
                 modifier = Modifier
                     .align(Alignment.Top)
-                    .offset(x = 8.dp, y = (-8).dp)
+                    .offset(x = 2.dp, y = (-8).dp)
             ) {
                 Checkbox(
                     checked = isChecked,
@@ -295,6 +298,24 @@ fun CartItemCard(
                             .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
                     ) {
                         Icon(Icons.Default.Add, contentDescription = "Tăng số lượng", tint = Color.Black)
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // 🗑 Nút xoá sản phẩm
+                    IconButton(
+                        onClick = {
+                            viewModel.deleteCartItem(cart.productId)
+                        },
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(Color(0xFFFFF0F0))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Xoá sản phẩm",
+                            tint = Color.Red
+                        )
                     }
                 }
             }
