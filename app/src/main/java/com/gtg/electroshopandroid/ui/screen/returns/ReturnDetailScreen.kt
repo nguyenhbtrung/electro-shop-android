@@ -1,6 +1,7 @@
 package com.gtg.electroshopandroid.ui.screen.returns
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -449,9 +450,10 @@ fun ReturnDetailContent(
                                         MaterialTheme.colorScheme.surfaceVariant,
                                         RoundedCornerShape(8.dp)
                                     )
-                                    .padding(6.dp),
+                                    .padding(6.dp)
+                                    .clickable { navController.navigate("products/${product.productId}") },
                                 placeholder = painterResource(id = com.gtg.electroshopandroid.R.drawable.ic_launcher_foreground),
-                                error = painterResource(id = com.gtg.electroshopandroid.R.drawable.ic_launcher_foreground)
+                                error = painterResource(id = com.gtg.electroshopandroid.R.drawable.ic_launcher_foreground),
                             )
 
                             Spacer(modifier = Modifier.width(12.dp))
@@ -461,7 +463,8 @@ fun ReturnDetailContent(
                                     text = product.name,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Medium,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.clickable { navController.navigate("products/${product.productId}") }
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
