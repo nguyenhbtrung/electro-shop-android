@@ -13,6 +13,7 @@ import com.gtg.electroshopandroid.ui.screen.home.HomeScreen
 import com.gtg.electroshopandroid.ui.screen.messages.MessagesScreen
 import com.gtg.electroshopandroid.ui.screen.notifications.NotificationsScreen
 import com.gtg.electroshopandroid.ui.screen.returns.ReturnHistoryScreen
+import com.gtg.electroshopandroid.ui.screen.returns.ReturnDetailScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderDetailScreen
 import com.gtg.electroshopandroid.ui.screen.order.CreateReturnScreen
@@ -178,6 +179,18 @@ fun AppNavHost(navController: NavHostController) {
                     onBack = { navController.popBackStack() }
                 )
             }
+        }
+
+        composable(
+            route = Screen.ReturnDetail.route,
+            arguments = listOf(navArgument("returnId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val returnId = backStackEntry.arguments?.getInt("returnId") ?: return@composable
+            ReturnDetailScreen(
+                returnId = returnId,
+                navController = navController,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
