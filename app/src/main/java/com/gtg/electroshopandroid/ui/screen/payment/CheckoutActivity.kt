@@ -31,9 +31,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.IconButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.ui.text.font.FontWeight
+
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gtg.electroshopandroid.formatCurrency
+import com.gtg.electroshopandroid.ui.screen.profile.ProfileDetailViewModel
 
 class CheckoutActivity : ComponentActivity() {
     companion object {
@@ -54,6 +68,8 @@ class CheckoutActivity : ComponentActivity() {
         var paymentIntentClientSecret by remember { mutableStateOf<String?>(null) }
 
         var error by remember { mutableStateOf<String?>(null) }
+
+        val profileViewModel : ProfileDetailViewModel = viewModel(factory=ProfileDetailViewModel.Factory)
 
         val paymentSheet = rememberPaymentSheet { paymentResult ->
             when (paymentResult) {
@@ -79,6 +95,7 @@ class CheckoutActivity : ComponentActivity() {
         }
 
         LaunchedEffect(amount) {
+            profileViewModel.loadProfile()
             fetchPaymentIntent(amount).onSuccess { clientSecret ->
                 paymentIntentClientSecret = clientSecret
             }.onFailure { paymentIntentError ->
@@ -86,10 +103,26 @@ class CheckoutActivity : ComponentActivity() {
             }
         }
 
-        androidx.compose.foundation.layout.Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = androidx.compose.ui.Alignment.Center
+        // giao dien
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
         ) {
+            HeaderCheckout { finish() }
+
+            Spacer(modifier = Modifier.height(10.dp)) // khoảng cách giữa header và button
+
+            TotalMoneyCheckout(total=amount)
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+
+            AddressCheckout(address = profileViewModel.address.value)
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             PayButton(
                 enabled = paymentIntentClientSecret != null,
                 onClick = {
@@ -104,20 +137,163 @@ class CheckoutActivity : ComponentActivity() {
         }
     }
 
-    @Composable
 
+    @Composable
+    private fun HeaderCheckout(onBackClick: () -> Unit) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                ,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = onBackClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Quay lại",
+                    modifier = Modifier.offset(x = (-10).dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = "Thanh toán",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.CenterVertically),
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Thêm IconButton trống để cân đối 2 bên
+            IconButton(onClick = {}, enabled = false) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                    tint = Color.Transparent
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun TotalMoneyCheckout(total:Double){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Tổng tiền giỏ hàng:",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ShoppingCart,
+                    contentDescription = "Tổng tiền",
+                    tint = Color.Blue,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = formatCurrency(total),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black,
+                    maxLines = 2,
+                    fontSize=18.sp
+                )
+            }
+        }
+    }
+
+    // Dia chi
+    @Composable
+    private fun AddressCheckout(address: String ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Địa chỉ:",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Địa chỉ giao hàng",
+                    tint = Color.Red,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = address,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black,
+                    maxLines = 2,
+                    fontSize=18.sp
+                )
+            }
+        }
+    }
+
+    // nut Pay
+    @Composable
     private fun PayButton(
         enabled: Boolean,
         onClick: () -> Unit
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
         ) {
+            Text(
+                text = "Phương thức thanh toán:",
+                color = Color.Black,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Payments,
+                    contentDescription = "Phương thức thanh toán",
+                    tint = Color.Green,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Stripe",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black,
+                    maxLines = 2,
+                    fontSize=18.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
             Text(
                 text = "Nhấn để thanh toán đơn hàng của bạn",
                 color = Color.Black,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(8.dp)) // Khoảng cách giữa Text và Button

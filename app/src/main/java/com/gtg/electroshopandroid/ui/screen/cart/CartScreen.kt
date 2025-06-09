@@ -351,6 +351,7 @@ fun CartBottomBar(totalPrice: Int) {
             onClick = {
                 val intent = Intent(context, CheckoutActivity::class.java)
                 intent.putExtra("amount", totalPrice.toDouble())
+
                 context.startActivity(intent)
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336)),
