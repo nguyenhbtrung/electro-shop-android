@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit
 // Biến môi trường tạm thời sửa lại sau
 object EnvVariable {
     const val OLD_HOST_BACKEND = "https://localhost:7169/"
-    const val BASE_URL = "http://10.0.2.2:5030/"
+    const val BASE_URL = "https://7f6c-113-190-122-42.ngrok-free.app/"
 }
 
 interface AppContainer {
