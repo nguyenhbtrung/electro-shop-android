@@ -1,7 +1,12 @@
 package com.gtg.electroshopandroid.ui.screen.order
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.model.OrderDto
 import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,6 +56,30 @@ class OrderHistoryViewModel(
                 _error.value = e.message ?: "Có lỗi xảy ra khi hủy đơn hàng"
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun createOrder(paymentMethod: String, onSuccess: () -> Unit = {}) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val newOrders = orderHistoryRepository.createOrder(paymentMethod)
+
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Có lỗi xảy ra khi tạo đơn hàng"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as ElectroShopApplication)
+                val orderHistoryRepository = application.container.orderHistoryRepository
+                OrderHistoryViewModel(orderHistoryRepository = orderHistoryRepository)
             }
         }
     }

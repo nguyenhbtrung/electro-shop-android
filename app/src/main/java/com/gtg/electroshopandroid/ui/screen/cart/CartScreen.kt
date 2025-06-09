@@ -40,6 +40,11 @@ import com.gtg.electroshopandroid.ui.screen.product.ProductViewModel
 import java.text.NumberFormat
 import java.util.Locale
 
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+
 fun String.toAndroidAccessibleUrl(): String {
     return this.replace(Regex("https://localhost(:\\d+)?"), "http://10.0.2.2:5030")
 }
@@ -51,6 +56,20 @@ fun formatPrice(price: Double): String {
 fun CartScreen() {
     val viewModel: CartViewModel = viewModel(factory = CartViewModel.Factory)
     val cartUiState = viewModel.cartUiState
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.getCartItems() // GỌI API khi quay lại
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     // Từng trạng thái được lưu theo productId
     val checkedMap = remember { mutableStateMapOf<Int, Boolean>() }

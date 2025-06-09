@@ -11,6 +11,9 @@ interface CartApiService {
     @GET("api/Cart/user/viewcart")
     suspend fun getCartItems(): List<CartDto>
 
+    @DELETE("api/Cart/user/deletecart")
+    suspend fun deleteCart(): Response<Unit>
+
     @DELETE("api/Cart/user/deletecartitem")
     suspend fun deleteCartItem(
         @Query("productId") productId: Int

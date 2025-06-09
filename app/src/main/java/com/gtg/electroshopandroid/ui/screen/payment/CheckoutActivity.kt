@@ -42,12 +42,23 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gtg.electroshopandroid.ElectroShopApplication
+import com.gtg.electroshopandroid.data.repository.OrderHistoryRepository
 import com.gtg.electroshopandroid.formatCurrency
+import com.gtg.electroshopandroid.ui.screen.cart.CartViewModel
+import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryViewModel
 import com.gtg.electroshopandroid.ui.screen.profile.ProfileDetailViewModel
+
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+
+import kotlinx.coroutines.delay
+
 
 class CheckoutActivity : ComponentActivity() {
     companion object {
@@ -71,11 +82,28 @@ class CheckoutActivity : ComponentActivity() {
 
         val profileViewModel : ProfileDetailViewModel = viewModel(factory=ProfileDetailViewModel.Factory)
 
+        val orderViewModel: OrderHistoryViewModel = viewModel(factory = OrderHistoryViewModel.Factory)
+
+        val viewModel: CartViewModel = viewModel(factory = CartViewModel.Factory)
+
         val paymentSheet = rememberPaymentSheet { paymentResult ->
             when (paymentResult) {
                 is PaymentSheetResult.Completed -> {
                     showToast("Payment complete!")
-                    finish() // Quay lại màn hình trước
+
+                    orderViewModel.viewModelScope.launch {
+                        try {
+                            orderViewModel.createOrder("stripe")    // Tạo đơn hàng
+                            viewModel.deleteCart()                 // Xoá giỏ hàng
+
+                            // ✅ Thêm delay nhỏ để đảm bảo màn trước có thời gian onResume và gọi API nếu có
+                            delay(300)  // 300ms là hợp lý
+
+                            finish()
+                        } catch (e: Exception) {
+                            showToast("Lỗi: ${e.message}")
+                        }
+                    }
                 }
                 is PaymentSheetResult.Canceled -> {showToast("Payment canceled!")
                 finish()}

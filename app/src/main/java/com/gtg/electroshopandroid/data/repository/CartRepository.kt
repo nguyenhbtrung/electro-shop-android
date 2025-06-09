@@ -8,6 +8,7 @@ import retrofit2.Response
 interface CartRepository {
     suspend fun getCartItems(): List<CartDto>
     suspend fun deleteCartItem(productId: Int): Response<Unit>
+    suspend fun deleteCart(): Response<Unit>
 }
 
 class CartRepositoryImpl(
@@ -20,4 +21,8 @@ class CartRepositoryImpl(
     override suspend fun deleteCartItem(productId: Int): Response<Unit> {
         return cartApiService.deleteCartItem(productId)
     }
+    override suspend fun deleteCart(): Response<Unit> {
+        return cartApiService.deleteCart()
+    }
+
 }

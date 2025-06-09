@@ -62,6 +62,24 @@ class CartViewModel(
             }
         }
     }
+    fun deleteCart() {
+        viewModelScope.launch {
+            try {
+                val response = cartRepository.deleteCart()
+                if (response.isSuccessful) {
+                    // Gọi lại getCartItems để làm mới danh sách
+                    getCartItems()
+                } else {
+                    // Xử lý lỗi nếu cần (ví dụ: log lỗi hoặc cập nhật UI)
+                    cartUiState = CartUiState.Error
+                }
+            } catch (e: IOException) {
+                cartUiState = CartUiState.Error
+            } catch (e: HttpException) {
+                cartUiState = CartUiState.Error
+            }
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
