@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.repository.BannerRepository
+import com.gtg.electroshopandroid.data.repository.FavoriteRepository
 import com.gtg.electroshopandroid.data.repository.ProductRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -19,7 +20,8 @@ import java.io.IOException
 
 class HomeViewModel(
     private val bannerRepository: BannerRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
 
     var uiState by mutableStateOf(HomeUiState())
@@ -71,10 +73,29 @@ class HomeViewModel(
         }
     }
 
+    private suspend fun toggleFavoriteSuspend(productId: Int): Boolean =
+        try {
+            favoriteRepository.toggleFavorite(productId) == "Added"
+        } catch (e: Exception) {
+            false
+        }
+
+    fun onToggleFavorite(productId: Int) {
+        viewModelScope.launch {
+            val newIsFav = toggleFavoriteSuspend(productId)
+            uiState = uiState.copy(
+                discountedProducts = uiState.discountedProducts
+                    .map { if (it.productId == productId) it.copy(isFavorite = newIsFav) else it },
+                bestSellerProducts = uiState.bestSellerProducts
+                    .map { if (it.productId == productId) it.copy(isFavorite = newIsFav) else it },
+            )
+        }
+    }
+
+
+
     init {
         LoadBanner()
-        LoadDiscountedProducts()
-        LoadBestSellerProducts()
     }
 
 
@@ -84,10 +105,12 @@ class HomeViewModel(
                 val application = (this[APPLICATION_KEY] as ElectroShopApplication)
                 val bannerRepository = application.container.bannerRepository
                 val productRepository = application.container.productRepository
+                val favoriteRepository = application.container.favoriteRepository
 
                 HomeViewModel(
                     bannerRepository = bannerRepository,
-                    productRepository = productRepository
+                    productRepository = productRepository,
+                    favoriteRepository = favoriteRepository
                 )
             }
         }
