@@ -25,7 +25,7 @@ class HomeViewModel(
     private val productRepository: ProductRepository,
     private val _searchUiState: MutableStateFlow<SearchUiState> =
         MutableStateFlow(SearchUiState.Loading),
-    val searchUiState: StateFlow<SearchUiState> = _searchUiState
+    val searchUiState: StateFlow<SearchUiState> = _searchUiState,
 
 
     private val favoriteRepository: FavoriteRepository

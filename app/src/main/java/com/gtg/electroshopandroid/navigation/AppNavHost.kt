@@ -109,8 +109,9 @@ fun AppNavHost(navController: NavHostController) {
             val query = backStackEntry.arguments?.getString("query") ?: ""
             SearchResultsScreen(
                 query = query,
-                navController = navController
-            )
+                navController = navController ,
+                onBack = { navController.popBackStack()})
+
         }
 
         composable(Screen.ProfileDetail.route) {
@@ -134,6 +135,7 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.Messages.route) {
             MessagesScreen(onBack = { navController.popBackStack() })
         }
+
         composable(Screen.Notifications.route) {
             NotificationsScreen(onBack = { navController.popBackStack() })
         }
@@ -156,6 +158,7 @@ fun AppNavHost(navController: NavHostController) {
                 onBack = { navController.popBackStack() }
             )
         }
+
 
         composable(
             route = Screen.CreateReturn.route, // Thay vì "create_return/{orderId}"

@@ -39,7 +39,6 @@ fun SearchResultsScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Nút quay lại ở trên cùng
         androidx.compose.foundation.layout.Box(
             modifier = Modifier
                 .fillMaxSize()

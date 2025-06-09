@@ -32,6 +32,8 @@ data class ProductDto(
     val categories: List<CategoryDto>,
     @SerialName("brand")
     val brand: BrandDto?,
+    @SerialName("isFavorite")
+    val isFavorite: Boolean,
 )
 
 @Serializable
