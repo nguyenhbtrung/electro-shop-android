@@ -6,6 +6,7 @@ import com.gtg.electroshopandroid.data.repository.AuthRepository
 import com.gtg.electroshopandroid.data.repository.AuthRepositoryImpl
 import com.gtg.electroshopandroid.data.interceptor.AuthInterceptor
 import com.gtg.electroshopandroid.data.network.BannerApiService
+import com.gtg.electroshopandroid.data.network.BrandApiService
 import com.gtg.electroshopandroid.data.network.CartApiService
 import com.gtg.electroshopandroid.data.network.CategoryApiService
 import com.gtg.electroshopandroid.data.network.ExampleApiService
@@ -21,6 +22,7 @@ import com.gtg.electroshopandroid.data.network.RatingApiService
 import com.gtg.electroshopandroid.data.network.RecommendApiService
 import com.gtg.electroshopandroid.data.repository.BannerRepository
 import com.gtg.electroshopandroid.data.repository.BannerRepositoryImpl
+import com.gtg.electroshopandroid.data.repository.BrandRepository
 import com.gtg.electroshopandroid.data.repository.CartRepository
 import com.gtg.electroshopandroid.data.repository.CartRepositoryImpl
 import com.gtg.electroshopandroid.data.repository.CategoryRepository
@@ -68,6 +70,7 @@ interface AppContainer {
     val bannerRepository: BannerRepository
     val profileRepository: ProfileRepository
     val favoriteRepository: FavoriteRepository
+    val brandRepository: BrandRepository
 }
 
 class DefaultAppContainer(
@@ -195,6 +198,14 @@ class DefaultAppContainer(
 
     override val favoriteRepository: FavoriteRepository by lazy {
         FavoriteRepositoryImpl(favoriteApiService)
+    }
+
+    private val brandApiService: BrandApiService by lazy {
+        retrofit.create(BrandApiService::class.java)
+    }
+
+    override val brandRepository: BrandRepository by lazy {
+        BrandRepository(brandApiService)
     }
 
 }
