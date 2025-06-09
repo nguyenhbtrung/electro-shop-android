@@ -236,8 +236,6 @@ fun ProfileScreen(navController: NavHostController) {
     }
 }
 
-
-
 @Preview
 @Composable
 fun PreviewProfileScreen(){
