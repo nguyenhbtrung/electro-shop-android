@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -310,23 +311,24 @@ fun FilterSectionBrand(
                     ) {
                         Text("Đánh giá:", modifier = Modifier.padding(bottom = 4.dp))
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            listOf("0-1", "1-2", "2-3", "3-4", "4-5").forEach { option ->
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            val options = listOf("0-1", "1-2", "2-3", "3-4", "4-5")
+                            items(options.size) { index ->
+                                val option = options[index]
                                 val isSelected = selectedRating == option
+
                                 OutlinedButton(
                                     onClick = {
-                                        if (isSelected) {
-                                            onRatingSelected("")  // Bỏ chọn nếu click lại
-                                        } else {
-                                            onRatingSelected(option)
-                                        }
+                                        onRatingSelected(if (isSelected) "" else option)
                                     },
                                     border = if (isSelected) BorderStroke(2.dp, Color(0xFFFFC107)) else null,
                                     colors = ButtonDefaults.outlinedButtonColors(
                                         containerColor = if (isSelected) Color(0xFFFFF8E1) else Color.White
                                     ),
                                     modifier = Modifier
-                                        .padding(horizontal = 2.dp)
                                         .height(36.dp)
                                 ) {
                                     Text(option)
@@ -334,17 +336,21 @@ fun FilterSectionBrand(
                             }
 
                             if (selectedRating == "4-5") {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = "Best Rating",
-                                    tint = Color(0xFFFFC107),
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .padding(start = 4.dp)
-                                )
+                                item {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = "Best Rating",
+                                        tint = Color(0xFFFFC107),
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .padding(start = 4.dp)
+                                            .align(Alignment.CenterHorizontally)
+                                    )
+                                }
                             }
                         }
                     }
+
 
                     Divider()
 
