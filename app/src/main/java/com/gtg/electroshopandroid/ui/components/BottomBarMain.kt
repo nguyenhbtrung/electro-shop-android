@@ -28,6 +28,7 @@ import com.gtg.electroshopandroid.preferences.TokenPreferences
 @Composable
 fun BottomBarMain(
     navController: NavHostController,
+    onExploreClick: () -> Unit,
     tokenPreferences: TokenPreferences = TokenPreferences(LocalContext.current)
 ) {
     val accessToken by tokenPreferences.accessTokenFlow.collectAsState(initial = null)
@@ -77,13 +78,17 @@ fun BottomBarMain(
                             restoreState = true
                         }
                     } else if (currentRoute != screen.route) {
-                        navController.navigate(screen.route) {
-                            // Pop up để tránh stack quá sâu
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+                        if (screen.route == Screen.Explore.route) {
+                            onExploreClick()
+                        } else {
+                            navController.navigate(screen.route) {
+                                // Pop up để tránh stack quá sâu
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     }
                 }
