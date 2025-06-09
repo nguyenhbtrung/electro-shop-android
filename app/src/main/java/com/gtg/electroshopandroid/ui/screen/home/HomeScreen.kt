@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,6 +46,11 @@ fun HomeScreen(
         viewModel(factory = HomeViewModel.Factory)
 
     val searchText = homeViewModel.searchText
+
+    LaunchedEffect(Unit) {
+        homeViewModel.LoadDiscountedProducts()
+        homeViewModel.LoadBestSellerProducts()
+    }
 
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(
@@ -92,13 +98,15 @@ fun HomeScreen(
             HorizontalScrollingProductList(
                 title = stringResource(R.string.discount),
                 productCardDtoList = homeViewModel.uiState.discountedProducts,
-                navController = navController
+                navController = navController,
+                onFavoriteClick = homeViewModel::onToggleFavorite
             )
             Spacer(Modifier.height(16.dp))
             HorizontalScrollingProductList(
                 title = stringResource(R.string.best_seller),
                 productCardDtoList = homeViewModel.uiState.bestSellerProducts,
-                navController = navController
+                navController = navController,
+                onFavoriteClick = homeViewModel::onToggleFavorite
             )
         }
     }

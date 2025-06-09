@@ -49,7 +49,7 @@ import com.gtg.electroshopandroid.ui.theme.onSurfaceLight
 @Composable
 fun ProductCard(
     productCardDto: ProductCardDto,
-    onFavoriteClick: () -> Unit,
+    onFavoriteClick: (Int) -> Unit,
     onProductClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -141,7 +141,7 @@ fun ProductCard(
 
             // Favorite Icon
             IconButton(
-                onClick = onFavoriteClick,
+                onClick = { onFavoriteClick(productCardDto.productId) },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .background(inversePrimaryLight, shape = RoundedCornerShape(bottomStart = 8.dp, topEnd = 16.dp))

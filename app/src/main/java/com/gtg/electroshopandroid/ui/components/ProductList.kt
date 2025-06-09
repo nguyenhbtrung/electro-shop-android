@@ -20,6 +20,7 @@ import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 fun HorizontalScrollingProductList(
     productCardDtoList: List<ProductCardDto>,
     title: String,
+    onFavoriteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     navController: NavController = rememberNavController()
 ) {
@@ -39,7 +40,7 @@ fun HorizontalScrollingProductList(
             items(productCardDtoList) { dto ->
                 ProductCard(
                     productCardDto = dto,
-                    onFavoriteClick = {},
+                    onFavoriteClick = onFavoriteClick,
                     onProductClick = { navController.navigate("products/${dto.productId}")}
                 )
             }

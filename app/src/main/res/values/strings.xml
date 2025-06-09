@@ -24,6 +24,7 @@
     <string name="best_seller">Bán chạy</string>
     <string name="product_detail">Chi tiết sản phẩm</string>
     <string name="create_return">Tạo yêu cầu hoàn trả</string>
+    <string name="return_detail">Chi tiết hoàn trả</string>
     <string name="close">Close</string>
     <string name="categories">Danh mục</string>
 </resources>

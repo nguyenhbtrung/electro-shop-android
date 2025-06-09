@@ -45,9 +45,10 @@ fun ReturnDto.toReturnItem(): ReturnItem {
         status = when(this.status.lowercase()) {
             "pending" -> "Đang xử lý"
             "approved" -> "Đã duyệt"
+            "processing" -> "Đang xử lý"
             "rejected" -> "Từ chối"
             "completed" -> "Hoàn thành"
-            "refunded" -> "Đã hoàn tiền"
+            "Canceled" -> "Đã hủy"
             else -> this.status
         },
         returnMethod = when(this.returnMethod.lowercase()) {
@@ -178,7 +179,12 @@ fun ReturnHistoryScreen(
                         contentPadding = PaddingValues(top = 16.dp)
                     ) {
                         items(filteredReturns) { returnItem ->
-                            ReturnHistoryCard(returnItem = returnItem)
+                            ReturnHistoryCard(
+                                returnItem = returnItem,
+                                onDetailClick = {
+                                    navController.navigate("return_detail/${returnItem.id}")
+                                }
+                            )
                         }
                     }
                 }
