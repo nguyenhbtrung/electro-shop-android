@@ -13,13 +13,20 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.data.repository.BannerRepository
 import com.gtg.electroshopandroid.data.repository.ProductRepository
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class HomeViewModel(
     private val bannerRepository: BannerRepository,
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val _searchUiState: MutableStateFlow<SearchUiState> =
+        MutableStateFlow(SearchUiState.Loading),
+    val searchUiState: StateFlow<SearchUiState> = _searchUiState
+
+
 ) : ViewModel() {
 
     var uiState by mutableStateOf(HomeUiState())
@@ -55,6 +62,22 @@ class HomeViewModel(
             }
 
             uiState = uiState.copy(discountedProducts = products)
+        }
+    }
+    fun searchProductsByName(productName: String) {
+        viewModelScope.launch {
+            _searchUiState.value = SearchUiState.Loading
+            try {
+                val result = productRepository.getProductsSearch(productName)
+                _searchUiState.value = SearchUiState.Success(result)
+            } catch (e: IOException) {
+                _searchUiState.value = SearchUiState.Error
+            } catch (e: HttpException) {
+                _searchUiState.value = SearchUiState.Error
+            } catch (e: Exception) {
+                Log.e("SearchError", e.message ?: "")
+                _searchUiState.value = SearchUiState.Error
+            }
         }
     }
 

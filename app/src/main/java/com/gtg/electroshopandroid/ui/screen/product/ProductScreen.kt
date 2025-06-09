@@ -172,7 +172,6 @@ fun ProductScreen(
                                 productId = productId
                             )
 
-                            // Thêm phần sản phẩm tương tự khi recommendUiState thành công
                             when (recommendUiState) {
                                 is RecommendUiState.Success -> {
                                     RecommendedProductsSection(recommendations = recommendUiState.recommendations, navController= navController)

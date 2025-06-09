@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.ui.screen.category.CategoryScreen
+import com.gtg.electroshopandroid.ui.screen.home.SearchResultsScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryViewModel
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -100,6 +101,16 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
+        composable(
+            route = "search_results/{query}",
+            arguments = listOf(navArgument("query") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val query = backStackEntry.arguments?.getString("query") ?: ""
+            SearchResultsScreen(
+                query = query,
+                navController = navController
+            )
+        }
 
         composable(Screen.ProfileDetail.route) {
             ProfileDetailScreen(

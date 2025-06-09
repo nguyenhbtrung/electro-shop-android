@@ -48,7 +48,7 @@ class FavoriteViewModel(
             try {
                 val status = favoriteRepository.toggleFavorite(productId)
                 if (status == "Removed") {
-                    loadFavorites() // refresh lại nếu bị xóa
+                    loadFavorites()
                 }
             } catch (e: Exception) {
                 Log.e("FavoriteViewModel", "Lỗi toggleFavorite(): ${e.message}")

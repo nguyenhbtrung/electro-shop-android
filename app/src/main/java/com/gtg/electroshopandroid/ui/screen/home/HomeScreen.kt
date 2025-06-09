@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.ui.screen.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -61,9 +62,16 @@ fun HomeScreen(
                 singleLine = true,
                 trailingIcon = {
                     Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        modifier = Modifier.size(32.dp)
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Tìm kiếm",
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable {
+                                if (searchText.isNotBlank()) {
+                                    homeViewModel.searchProductsByName(searchText)
+                                    navController.navigate("search_results/${searchText}")
+                                }
+                            }
                     )
                 },
                 shape = RoundedCornerShape(32.dp),

@@ -16,6 +16,12 @@ sealed interface BannerUiState {
     data object Loading : BannerUiState
 }
 
+sealed class SearchUiState {
+    object Loading : SearchUiState()
+    data class Success(val products: List<ProductCardDto>) : SearchUiState()
+    object Error : SearchUiState()
+}
+
 fun initLoadingBanners() : List<BannerDto> {
     return listOf(
         BannerDto(1, "", ""),
