@@ -28,10 +28,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.gtg.electroshopandroid.ElectroShopApplication
 import com.gtg.electroshopandroid.ui.screen.category.CategoryScreen
 import com.gtg.electroshopandroid.ui.screen.home.SearchResultsScreen
 import com.gtg.electroshopandroid.ui.screen.order.OrderHistoryViewModel
+import com.gtg.electroshopandroid.ui.screen.productHistory.ProductHistoryScreen
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -160,6 +163,19 @@ fun AppNavHost(navController: NavHostController) {
             NotificationsScreen(onBack = { navController.popBackStack() })
         }
 
+        composable(Screen.BrowsingHistory.route) {
+            ProductHistoryScreen(
+                onBack = { navController.popBackStack() },
+                onProductClick = { navController.navigate("products/$it") },
+            )
+        }
+        composable(Screen.Support.route) {
+            MessagesScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Screen.Settings.route) {
+            HomeScreen(navController = navController)
+        }
+
         composable(
             route = Screen.OrderDetail.route,
             arguments = listOf(navArgument("orderId") { type = NavType.IntType })
@@ -190,8 +206,8 @@ fun AppNavHost(navController: NavHostController) {
             val orderHistoryRepository = context.container.orderHistoryRepository
 
             val viewModel: OrderHistoryViewModel = viewModel(
-                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
-                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                factory = object : ViewModelProvider.Factory {
+                    override fun <T : ViewModel> create(modelClass: Class<T>): T {
                         @Suppress("UNCHECKED_CAST")
                         return OrderHistoryViewModel(orderHistoryRepository) as T
                     }

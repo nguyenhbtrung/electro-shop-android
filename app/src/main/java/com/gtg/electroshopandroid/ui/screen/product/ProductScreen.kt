@@ -89,6 +89,9 @@ fun ProductScreen(
             launch {
                 recommendViewModel.getRecommendations(productId)
             }
+            launch {
+                viewModel.createProductHistory(productId)
+            }
         }
         when (cartUiState) {
             is CartUiState.Success -> {

@@ -27,7 +27,7 @@ sealed class Screen(val route: String, val icon: ImageVector?, @StringRes val la
     data object Signup : Screen("signup", null, R.string.signup)
 
     data object ProfileDetail : Screen("profileDetail", null, R.string.profile_detail)
-    data object Settings : Screen("settings", null, R.string.settings)
+    data object Settings : Screen("home", null, R.string.settings)
     data object BrowsingHistory : Screen("browsingHistory", null, R.string.browsing_history)
     data object Support : Screen("support", null, R.string.support)
     data object ReturnHistory : Screen("returnHistory", null, R.string.return_history)

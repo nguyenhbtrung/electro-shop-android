@@ -5,6 +5,8 @@ import com.gtg.electroshopandroid.data.network.ProductHistoryApiService
 
 interface ProductHistoryRepository {
     suspend fun getHistory(): List<ProductHistoryDto>
+    suspend fun createHistory(productId: Int): ProductHistoryDto
+    suspend fun deleteHistory(productId: Int): Unit
 }
 
 class ProductHistoryRepositoryImpl(
@@ -13,4 +15,10 @@ class ProductHistoryRepositoryImpl(
 
     override suspend fun getHistory(): List<ProductHistoryDto>
     = productHistoryApiService.getHistory()
+
+    override suspend fun createHistory(productId: Int): ProductHistoryDto
+    = productHistoryApiService.createHistory(productId)
+
+    override suspend fun deleteHistory(productId: Int): Unit
+            = productHistoryApiService.deleteHistory(productId)
 }

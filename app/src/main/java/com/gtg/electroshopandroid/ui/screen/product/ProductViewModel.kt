@@ -18,6 +18,7 @@ import java.io.IOException
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.gtg.electroshopandroid.data.model.product.ProductCardDto
 import com.gtg.electroshopandroid.data.model.product.RecommendDto
+import com.gtg.electroshopandroid.data.repository.ProductHistoryRepository
 import com.gtg.electroshopandroid.data.repository.RecommendRepository
 import kotlin.math.log
 
@@ -38,7 +39,8 @@ sealed interface SearchUiState {
 }
 
 class ProductViewModel(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val productHistoryRepository: ProductHistoryRepository
 ) : ViewModel() {
 
     var productUiState: ProductUiState by mutableStateOf(ProductUiState.Loading)
@@ -80,12 +82,27 @@ class ProductViewModel(
             }
         }
     }
+
+    fun createProductHistory(productId: Int) {
+        viewModelScope.launch {
+            try {
+                productHistoryRepository.createHistory(productId)
+            } catch (_: Exception){
+
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as ElectroShopApplication)
                 val productRepository = application.container.productRepository
-                ProductViewModel(productRepository = productRepository)
+                val productHistoryRepository = application.container.productHistoryRepository
+                ProductViewModel(
+                    productRepository = productRepository,
+                    productHistoryRepository = productHistoryRepository
+                )
             }
         }
     }
