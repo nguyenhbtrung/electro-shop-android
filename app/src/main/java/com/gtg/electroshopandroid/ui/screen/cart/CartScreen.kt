@@ -42,6 +42,7 @@ import java.util.Locale
 
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 
@@ -353,13 +354,36 @@ fun CartBottomBar(totalPrice: Int) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Tổng tiền:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Text(
-                text = "%,d đ".format(totalPrice),
-                fontSize = 18.sp,
-                color = Color.Red,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = "Tổng tiền:",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Column {
+                    // Giá gốc (có gạch ngang)
+                    Text(
+                        text = "%,d đ".format(totalPrice),
+                        fontSize = 16.sp,
+                        color = Color.Gray,
+                        textDecoration = TextDecoration.LineThrough
+                    )
+
+                    // Giá giảm (màu đỏ, đậm)
+                    Text(
+                        text = "%,d đ".format((totalPrice * 0.9).toInt()),
+                        fontSize = 20.sp,
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -367,7 +391,7 @@ fun CartBottomBar(totalPrice: Int) {
         Button(
             onClick = {
                 val intent = Intent(context, CheckoutActivity::class.java)
-                intent.putExtra("amount", totalPrice.toDouble())
+                intent.putExtra("amount", (totalPrice * 0.9).toDouble())
 
                 context.startActivity(intent)
             },
