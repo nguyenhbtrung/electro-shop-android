@@ -37,10 +37,25 @@ class CartViewModel(
             cartUiState = try {
                 val result = cartRepository.getCartItems()
                 CartUiState.Success(result)
-            } catch (e: IOException) {
-                CartUiState.Error
             } catch (e: HttpException) {
-                CartUiState.Error
+                if (e.code() == 404) {
+                    CartUiState.Success(emptyList()) // Giỏ hàng rỗng
+                } else {
+                    CartUiState.Error
+                }
+            }
+        }
+    }
+    fun addToCart(productId: Int, quantity: Int) {
+        viewModelScope.launch {
+            try {
+                val addedItem = cartRepository.addToCart(productId, quantity) // Trả về CartDto
+                // Sau khi thêm, lấy lại toàn bộ giỏ hàng để làm mới UI:
+                getCartItems()
+            } catch (e: IOException) {
+                cartUiState = CartUiState.Error
+            } catch (e: HttpException) {
+                cartUiState = CartUiState.Error
             }
         }
     }
@@ -68,10 +83,10 @@ class CartViewModel(
                 val response = cartRepository.deleteCart()
                 if (response.isSuccessful) {
                     // Gọi lại getCartItems để làm mới danh sách
-                    getCartItems()
+
                 } else {
                     // Xử lý lỗi nếu cần (ví dụ: log lỗi hoặc cập nhật UI)
-                    cartUiState = CartUiState.Error
+
                 }
             } catch (e: IOException) {
                 cartUiState = CartUiState.Error

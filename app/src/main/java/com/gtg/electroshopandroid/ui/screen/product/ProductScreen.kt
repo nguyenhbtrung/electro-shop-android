@@ -1,5 +1,6 @@
 package com.gtg.electroshopandroid.ui.screen.product
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,9 +51,13 @@ import com.gtg.electroshopandroid.ui.components.ProductCard
 import com.gtg.electroshopandroid.ui.screen.rating.RatingUiState
 import com.gtg.electroshopandroid.ui.screen.rating.RatingViewModel
 import com.gtg.electroshopandroid.convertBaseUrl
+import com.gtg.electroshopandroid.ui.screen.cart.CartUiState
+import com.gtg.electroshopandroid.ui.screen.cart.CartViewModel
 import kotlinx.coroutines.coroutineScope
 import java.text.NumberFormat
 import java.util.Locale
+
+import androidx.compose.ui.platform.LocalContext
 fun formatPrice(price: Double): String {
     val formatter = NumberFormat.getInstance(Locale("vi", "VN"))
     return formatter.format(price)
@@ -71,7 +76,12 @@ fun ProductScreen(
     val recommendUiState = recommendViewModel.recommendUiState
     var quantity by remember { mutableStateOf(1) }
 
-    LaunchedEffect(productId) {
+    //them vao gio hang
+    val cartViewModel: CartViewModel = viewModel(factory = CartViewModel.Factory)
+    val cartUiState = cartViewModel.cartUiState
+    val context = LocalContext.current
+
+    LaunchedEffect(productId,cartUiState) {
         coroutineScope {
             launch {1
                 viewModel.getProductById(productId)
@@ -79,6 +89,15 @@ fun ProductScreen(
             launch {
                 recommendViewModel.getRecommendations(productId)
             }
+        }
+        when (cartUiState) {
+            is CartUiState.Success -> {
+                Toast.makeText(context, "Thêm vào giỏ hàng thành công!", Toast.LENGTH_SHORT).show()
+            }
+            is CartUiState.Error -> {
+                Toast.makeText(context, "Lỗi khi thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
         }
     }
 
@@ -196,7 +215,7 @@ fun ProductScreen(
                     quantity = quantity,
                     onIncrement = { quantity++ },
                     onDecrement = { if (quantity > 1) quantity-- },
-                    onAddToCart = { /* xử lý thêm vào giỏ hàng */ },
+                    onAddToCart = { cartViewModel.addToCart(product.productId,quantity) },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()

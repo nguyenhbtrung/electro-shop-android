@@ -4,6 +4,7 @@ import com.gtg.electroshopandroid.data.model.CartDto;
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET;
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -18,4 +19,10 @@ interface CartApiService {
     suspend fun deleteCartItem(
         @Query("productId") productId: Int
     ): Response<Unit>
+
+    @POST("api/Cart/user/addtocart")
+    suspend fun addToCart(
+        @Query("productId") productId: Int,
+        @Query("quantity") quantity: Int
+    ): CartDto
 }

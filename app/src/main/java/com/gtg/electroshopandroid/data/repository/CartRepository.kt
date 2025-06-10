@@ -9,6 +9,7 @@ interface CartRepository {
     suspend fun getCartItems(): List<CartDto>
     suspend fun deleteCartItem(productId: Int): Response<Unit>
     suspend fun deleteCart(): Response<Unit>
+    suspend fun addToCart(productId: Int,quantity: Int): CartDto
 }
 
 class CartRepositoryImpl(
@@ -23,6 +24,9 @@ class CartRepositoryImpl(
     }
     override suspend fun deleteCart(): Response<Unit> {
         return cartApiService.deleteCart()
+    }
+    override suspend fun addToCart(productId: Int,quantity: Int): CartDto{
+        return cartApiService.addToCart(productId,quantity)
     }
 
 }

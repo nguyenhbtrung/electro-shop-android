@@ -13,11 +13,11 @@ data class CartDto(
     val quantity: Int,
 
     @SerialName("stock")
-    val stock: Int,
+    val stock: Int = 0,
 
     @SerialName("productName")
-    val productName: String,
+    val productName: String? = null,    // ✅ Cho phép null
 
     @SerialName("productImage")
-    val productImage: String
+    val productImage: String? = null    // ✅ Cho phép null
 )

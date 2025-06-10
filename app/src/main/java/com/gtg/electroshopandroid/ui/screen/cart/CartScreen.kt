@@ -75,9 +75,7 @@ fun CartScreen() {
     val checkedMap = remember { mutableStateMapOf<Int, Boolean>() }
     val quantityMap = remember { mutableStateMapOf<Int, Int>() }
 
-    LaunchedEffect(Unit) {
-        viewModel.getCartItems()
-    }
+
 
     when (cartUiState) {
         is CartUiState.Loading -> Text("Đang tải sản phẩm...")
@@ -175,8 +173,8 @@ fun CartItemCard(
     selectedSsd: String,
     onSsdSelected: (String) -> Unit
 ) {
-    val imageUrls = cart.productImage.toAndroidAccessibleUrl()
-    val textpc=cart.productName
+    val imageUrls = cart.productImage?.toAndroidAccessibleUrl() ?: ""
+    val textpc = cart.productName ?: "Sản phẩm không tên"
     val pricepc=cart.price
 
     Card(
