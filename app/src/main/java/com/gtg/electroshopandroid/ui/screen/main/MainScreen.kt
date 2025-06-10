@@ -45,9 +45,16 @@ fun MainScreen(navController: NavHostController) {
                     mainViewModel.setSelectedCategoryChild(id)
                     navController.navigate("categories/$id/$name")
                 },
+                onBrandClick = { id, name ->
+                    mainViewModel.setSelectedBrand(id)
+                    navController.navigate("brand/$id/$name")
+
+                },
                 categories = mainViewModel.uiState.categories,
                 selectedCategoryParentId = mainViewModel.uiState.selectedCategoryParentId,
                 selectedCategoryChildId = mainViewModel.uiState.selectedCategoryChildId,
+                brands = mainViewModel.uiState.brands,
+                selectedBrandId = mainViewModel.uiState.selectedBrandId
             )
         }
 
